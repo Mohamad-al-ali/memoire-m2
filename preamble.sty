@@ -1,0 +1,184 @@
+%===============================================================================
+% Preamble - Mémoire de Stage Master 2 Informatique
+%===============================================================================
+
+%-------------------------------------------------------------------------------
+% Import Packages
+%-------------------------------------------------------------------------------
+
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath, amssymb, cancel}
+\numberwithin{equation}{section}
+
+\usepackage{minted}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\usepackage{pgfplots, pgfplotstable, svg}
+\usepackage[font=small]{caption}
+\usepackage[symbol]{footmisc}
+\usepackage{parskip}
+\usepackage{subcaption}
+\usepackage{enumerate}
+\usepackage[none]{hyphenat}
+\usepackage{tocloft}
+
+\usepackage[
+    left=2.5cm,
+    right=2.5cm,
+    top=3cm,
+    bottom=3cm
+]{geometry}
+
+\usepackage{etoolbox}
+
+% Hide automatic References title
+\patchcmd{\thebibliography}{\section\*{\refname}}{}{}{}
+
+\usepackage{sectsty}
+
+\sectionfont{\centering}
+\partfont{\centering}
+
+
+%-------------------------------------------------------------------------------
+% Produce Shorthand Commands
+%-------------------------------------------------------------------------------
+
+\newcommand{\pfrac}[2]{\dfrac{\partial #1}{\partial #2}}
+\newcommand{\diffrac}[2]{\dfrac{d #1}{d #2}}
+
+\renewcommand{\bf}[1]{\mathbf{#1}}
+\renewcommand{\cal}[1]{\mathcal{#1}}
+\renewcommand{\Re}[1]{\mathbb{R}}
+
+\newcommand{\lf}{\left}
+\newcommand{\rt}{\right}
+\newcommand{\mbf}{\mathbf}
+
+
+%-------------------------------------------------------------------------------
+% Adjust Contents, Figure and Table Lists
+%-------------------------------------------------------------------------------
+
+\renewcommand{\cfttoctitlefont}
+    {\hspace*{\fill}\LARGE\bfseries}
+
+\renewcommand{\cftaftertoctitle}
+    {\hspace*{\fill}}
+
+\renewcommand{\contentsname}{Sommaire}
+
+\renewcommand{\cftlottitlefont}
+    {\hspace*{\fill}\Large\bfseries}
+
+\renewcommand{\cftafterlottitle}
+    {\hspace*{\fill}}
+
+\renewcommand{\cftloftitlefont}
+    {\hspace*{\fill}\Large\bfseries}
+
+\renewcommand{\cftafterloftitle}
+    {\hspace*{\fill}}
+
+
+%-------------------------------------------------------------------------------
+% Format of Sections
+%-------------------------------------------------------------------------------
+
+\newcommand{\thenewsection}{\arabic{section}.}
+
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}
+    {\arabic{section}.\arabic{subsection}.}
+
+\renewcommand{\thesubsubsection}
+    {\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.}
+
+\renewcommand{\theequation}
+    {\thenewsection\arabic{equation}}
+
+
+%-------------------------------------------------------------------------------
+% Bibliography
+%-------------------------------------------------------------------------------
+
+\bibliographystyle{plain}
+
+
+%-------------------------------------------------------------------------------
+% Title style
+%-------------------------------------------------------------------------------
+
+\title{
+
+\begin{tikzpicture}
+    \node at (0,0)
+    {\includegraphics[
+        width=0.4\columnwidth
+    ]{Universite_Bordeaux.jpg}};
+\end{tikzpicture}
+
+\vskip 0.2in
+\par
+
+\textbf{
+    Optimisation automatique des paramètres
+    d'exécution du benchmark IO500
+}
+
+\vskip 0.5in
+\par
+
+\large{
+    Mémoire de Stage \\
+    Master 2 Informatique
+
+    \vskip 0.15in
+
+    réalisé par
+
+    \vskip 0.10in
+}
+
+}
+
+
+
+
+%-------------------------------------------------------------------------------
+% Date
+%-------------------------------------------------------------------------------
+
+\date{\today}
+
+
+%-------------------------------------------------------------------------------
+% PGFPlots compatibility
+%-------------------------------------------------------------------------------
+
+\pgfplotsset{compat=1.18}
+
+
+%-------------------------------------------------------------------------------
+% Footnote symbols
+%-------------------------------------------------------------------------------
+
+\makeatletter
+
+\renewcommand*{\@fnsymbol}[1]{%
+    \ifcase#1
+    \or
+    \or
+    \or
+    \or $\star$
+    \or $\dagger\ $
+    \or $\ddagger\ $
+    \else
+    @ctrerr
+    \fi
+}
+
+\makeatother
