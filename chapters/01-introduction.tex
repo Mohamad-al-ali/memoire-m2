@@ -1,27 +1,110 @@
 \section{Introduction}
 
-\subsection{Contexte}
+% =============================================================================
+% GOAL OF THIS SECTION (2-3 pages)
+% Tell the story in this order: I/O is a bottleneck -> IO500 measures it ->
+% the score depends on configuration -> tuning it properly is intractable ->
+% we make it cheap -> here is what we found.
+% Every bullet below is a paragraph to write, not a bullet to keep.
+% =============================================================================
 
-Le calcul haute performance (HPC) permet...
+\subsection{Context}
 
-\subsection{Problématique}
+\begin{itemize}
+    \item HPC applications are increasingly limited by I/O rather than by
+          compute: data volumes grow faster than the storage system's ability
+          to absorb them.
+    \item Parallel file systems (Lustre, BeeGFS, GPFS) expose many tunable
+          knobs (striping, number of storage targets, transfer size, process
+          placement), and the right values are machine dependent.
+    \item IO500 is the de-facto standard benchmark for ranking HPC storage
+          systems: it combines bandwidth-oriented and metadata-oriented phases
+          into a single score, and publishes a biannual list.
+    \item Because IO500 is a \emph{ranking}, sites have a direct incentive to
+          tune it; but the published score of a system depends as much on how
+          it was configured for the run as on the hardware itself.
+\end{itemize}
 
-Les performances des applications HPC dépendent notamment...
+\subsection{Problem statement}
 
-\subsection{Objectifs du stage}
+\begin{itemize}
+    \item The IO500 submission rules require every write/create phase to run
+          for at least \SI{300}{\second} (stonewall timer set to
+          \SI{300}{\second}); a run whose write phase finishes earlier is
+          marked \textbf{invalid}.
+    \item Consequence: one \emph{valid} IO500 measurement costs roughly
+          \SI{30}{\minute} of exclusive cluster time.
+    \item The parameter space explored in this work has
+          \todoitem{confirm final number} $\approx 7{,}840$ configurations;
+          measuring all of them validly with 3 repetitions would take
+          $\approx \SI{12000}{\hour}$ of wall-clock time, i.e. more than one
+          year on the target machine.
+    \item Exhaustive tuning is therefore out of reach, and practitioners fall
+          back on expert intuition or on greedy, one-parameter-at-a-time
+          sweeps.
+    \item \textbf{Research question:} can a smarter search reach a
+          near-optimal IO500 configuration in far fewer evaluations, and which
+          search method actually does so?
+\end{itemize}
 
-L'objectif de ce stage est...
+\subsection{Objectives of the internship}
+
+\begin{itemize}
+    \item Build a \emph{cheap} but faithful ground truth of the IO500 response
+          surface on a real cluster.
+    \item Evaluate Bayesian Optimization (BO) as a tuning strategy for IO500,
+          and determine \emph{which} BO configuration works, since ``Bayesian
+          Optimization'' is not a single method but a family (surrogate model
+          $\times$ acquisition function $\times$ exploration parameter
+          $\times$ budget).
+    \item Compare BO against random search, exhaustive search, and a human
+          specialist.
+    \item Package the resulting methodology and configurations inside the
+          IOPS framework so that the study is reproducible by third parties.
+\end{itemize}
 
 \subsection{Contributions}
 
-Les principales contributions réalisées au cours du stage sont les suivantes :
-
 \begin{itemize}
-    \item ...
-    \item ...
-    \item ...
+    \item \textbf{A cheap ground-truth methodology.} Running the sweep with a
+          shortened stonewall (\SI{10}{\second}) and a small dataset produces
+          \emph{invalid} IO500 scores that nevertheless preserve the relative
+          ranking of configurations. The full grid was measured in
+          $\approx \SI{183}{\hour}$ instead of more than a year.
+    \item \textbf{A reusable cache.} Every \texttt{parameters $\rightarrow$
+          SCORE} pair is stored in an SQLite cache
+          (\texttt{io500.db}), so any search strategy can be replayed offline
+          at zero cluster cost with \texttt{iops run --cache-only}.
+    \item \textbf{A systematic comparison of BO setups}: \todoitem{confirm}
+          83 BO configurations (surrogate $\in$ \{GP, RF, ET\}, acquisition
+          $\in$ \{EI, PI, LCB\}, exploration $\xi$/$\kappa$/$n_{\text{init}}$,
+          budget $\in \{10,15,20,30,40\}$), each repeated over 10 seeds.
+    \item \textbf{A sensitivity study} isolating which BO knob actually
+          drives quality.
+    \item \textbf{A validation campaign} re-running the best configurations
+          with a \emph{valid} IO500 setup on the cluster, to check that the
+          cheap proxy really does preserve the ranking.
+    \item \textbf{A human baseline}: a specialist challenge in which an expert
+          submits their best guesses through a form, run under exactly the
+          same conditions as the automated search.
 \end{itemize}
 
-\subsection{Organisation du mémoire}
+\subsection{Organisation of the report}
 
-La suite de ce mémoire est organisée comme suit...
+% Replace each item with a proper cross-reference (Section~\ref{sec:...})
+% once the corresponding section has been added to main.tex.
+\begin{itemize}
+    \item \textbf{Context} presents the host laboratory, the team and the
+          internship framework.
+    \item \textbf{Background} introduces IO500, parallel file system tuning
+          and Bayesian Optimization.
+    \item \textbf{Related work} reviews existing approaches to I/O
+          auto-tuning.
+    \item \textbf{Tools and experimental setup} describes the tools, the
+          target platform and the complete installation procedure.
+    \item \textbf{Methodology} details how the ground truth was built and how
+          the search strategies were compared.
+    \item \textbf{Results} reports and analyses the measurements.
+    \item \textbf{Discussion} covers the limitations and threats to validity,
+          and \textbf{Conclusion} summarises the work and its perspectives.
+\end{itemize}

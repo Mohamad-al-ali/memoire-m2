@@ -13,6 +13,11 @@
 \restoregeometry
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% \newpage
+% \input{chapters/00-abstract}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \newpage
 \tableofcontents
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,17 +26,26 @@
 \pagenumbering{arabic}
 
 \input{chapters/01-introduction}
+
+% Remaining sections, added one step at a time:
 % \input{chapters/02-contexte}
-% \input{chapters/03-etat-de-l-art}
-% \input{chapters/04-problematique-methodologie}
-% \input{chapters/05-travail-realise}
-% \input{chapters/06-resultats}
-% \input{chapters/07-conclusion}
+% \input{chapters/03-background}
+% \input{chapters/04-related-work}
+% \input{chapters/05-tools-setup}
+% \input{chapters/06-methodology}
+% \input{chapters/07-results}
+% \input{chapters/08-discussion}
+% \input{chapters/09-conclusion}
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \newpage
-\part*{Bibliographie}
+\part*{Bibliography}
+\addcontentsline{toc}{section}{Bibliography}
 \bibliography{References}
 \nocite{*}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+% \newpage
+% \input{annexes/annexes}
 
 \end{document}

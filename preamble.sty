@@ -6,8 +6,14 @@
 % Import Packages
 %-------------------------------------------------------------------------------
 
-\usepackage[french]{babel}
+% Report language. Switch back to [french] if the report must be in French.
+\usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Units (\SI, \si) and professional tables (\toprule, \midrule, \bottomrule)
+\usepackage{siunitx}
+\usepackage{booktabs}
 
 \usepackage{amsmath, amssymb, cancel}
 \numberwithin{equation}{section}
@@ -23,6 +29,9 @@
 \usepackage{subcaption}
 \usepackage{enumerate}
 \usepackage[none]{hyphenat}
+% Hyphenation is disabled above, so give TeX some slack on lines containing
+% long \texttt{} tokens (file paths, option names) to avoid overfull boxes.
+\emergencystretch=3em
 \usepackage{tocloft}
 
 \usepackage[
@@ -46,6 +55,11 @@
 %-------------------------------------------------------------------------------
 % Produce Shorthand Commands
 %-------------------------------------------------------------------------------
+
+% Drafting marker: highlights what is still to be done or to be checked.
+% Set \todoitemsoff in main.tex to hide every marker in the final version.
+\newcommand{\todoitem}[1]{\textcolor{red}{\textbf{[TODO:} #1\textbf{]}}}
+\newcommand{\todoitemsoff}{\renewcommand{\todoitem}[1]{}}
 
 \newcommand{\pfrac}[2]{\dfrac{\partial #1}{\partial #2}}
 \newcommand{\diffrac}[2]{\dfrac{d #1}{d #2}}
@@ -125,24 +139,31 @@
 \par
 
 \textbf{
-    Optimisation automatique des paramètres
-    d'exécution du benchmark IO500
+    Automatic tuning of the IO500 benchmark parameters
+    with Bayesian Optimization
 }
+% French title (if the report is written in French):
+% Optimisation automatique des paramètres d'exécution du benchmark IO500
 
 \vskip 0.5in
 \par
 
 \large{
-    Mémoire de Stage \\
-    Master 2 Informatique
+    M2 Computer Science \\
+    Internship Report
 
     \vskip 0.15in
 
-    réalisé par
+    Inria Centre at the University of Bordeaux
 
     \vskip 0.10in
 }
 
+}
+
+\author{
+    \todoitem{student name} \\
+    \small Supervisors: \todoitem{supervisor names}
 }
 
 
