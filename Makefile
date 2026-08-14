@@ -1,36 +1,40 @@
 #===============================================================================
 # Makefile - Mémoire de Stage Master 2 Informatique
 #===============================================================================
+# The targets are phony on purpose: latexmk does its own dependency tracking
+# (it reads main.fls / main.fdb_latexmk and knows about every \input, image and
+# .bib file), so make must never second-guess it with timestamp comparisons.
+#===============================================================================
 
 MAIN      := main
 TEX       := $(MAIN).tex
 PDF       := $(MAIN).pdf
 
-SOURCES   := $(TEX) preamble.sty References.bib \
-             $(wildcard chapters/*.tex) $(wildcard annexes/*.tex)
-
 # minted and svg require shell escape (pygmentize / inkscape)
 LATEXMK       := latexmk
-LATEXMKFLAGS  := -pdf -bibtex -shell-escape -interaction=nonstopmode -file-line-error
+LATEXMKFLAGS  := -pdf -bibtex -shell-escape \
+                 -interaction=nonstopmode -halt-on-error -file-line-error
 
 VIEWER    := xdg-open
 
-.PHONY: all pdf watch view clean distclean check help
+.PHONY: all pdf force watch view clean distclean check help
 
 all: pdf
 
-## pdf: build $(PDF)
-pdf: $(PDF)
-
-$(PDF): $(SOURCES)
+## pdf: build main.pdf (recompiles only what latexmk considers out of date)
+pdf:
 	$(LATEXMK) $(LATEXMKFLAGS) $(TEX)
+
+## force: rebuild main.pdf from scratch, ignoring any cached state
+force:
+	$(LATEXMK) $(LATEXMKFLAGS) -g $(TEX)
 
 ## watch: rebuild automatically on every save
 watch:
 	$(LATEXMK) $(LATEXMKFLAGS) -pvc $(TEX)
 
 ## view: open the compiled PDF
-view: $(PDF)
+view: pdf
 	$(VIEWER) $(PDF) >/dev/null 2>&1 &
 
 ## check: report missing external tools
