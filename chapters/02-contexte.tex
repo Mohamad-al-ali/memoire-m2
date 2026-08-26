@@ -5,64 +5,254 @@
 % was organised over time. Keep it factual; the science starts in the next
 % section.
 
-\begin{itemize}
+%     \begin{itemize}
+%         \item Inria: French national research institute for digital science
+%               and technology, organised in research centres, each hosting
+%               project-teams that are  joint with the university.
+%         \item The Inria Centre at the University of Bordeaux:
+%               \todoitem{number of teams and staff, main research axes,
+%               location on the Talence campus}.
+%         \item Local ecosystem relevant to this work: HPC culture of the lab
+%     \end{itemize}
+\subsection{Inria and the Inria Centre at the University of Bordeaux}
 
-    %--------------------------------------------------------------------
-    \item \textbf{Inria and the Inria Centre at the University of Bordeaux.}
-    \begin{itemize}
-        \item Inria: French national research institute for digital science
-              and technology, organised in research centres, each hosting
-              project-teams that are  joint with the university.
-        \item The Inria Centre at the University of Bordeaux:
-              \todoitem{number of teams and staff, main research axes,
-              location on the Talence campus}.
-        \item Local ecosystem relevant to this work: HPC culture of the lab
-    \end{itemize}
+Inria is the French national research institute for digital science and
+technology. Its research activities cover a wide range of topics in
+computer science, applied mathematics, and digital technologies. Research
+is organised into project teams, which bring together researchers,
+engineers, PhD students, and other scientific staff around common research
+topics.
 
-    %--------------------------------------------------------------------
-    \item \textbf{The host team.}
-    \begin{itemize}
-        \item Team \textsc{TADaaM}
-        \item Position of this internship inside the team's roadmap: storage
-              performance characterisation, I/O benchmarking, and the
-              development of the IOPS framework.
-        \item Supervision: Luan Teylo.
-        \item People involved in the broader IO500 effort:
-              \todoitem{list the collaborators: people we had the meeting}.
-    \end{itemize}
+The internship was carried out at the Inria Centre at the University of
+Bordeaux. The centre is located on the Talence campus and brings together
+research teams working on different areas of digital science. Inria
+currently has 22 project teams associated with the centre, including 20
+teams located in Talence and two teams in Pau. The centre brings together
+more than 470 researchers, engineers, technical staff, and other members
+of the research and innovation community. These teams are developed in
+partnership with institutions such as the University of Bordeaux,
+Bordeaux INP, CNRS, Inserm, INRAE, and other academic and industrial
+partners~\cite{inria_bordeaux}.
 
-    %--------------------------------------------------------------------
-    \item \textbf{Scientific and technical environment.}
-    \begin{itemize}
-        \item \textbf{PlaFRIM}: the experimental platform used for all the
-              measurements. \todoitem{describe: number of nodes, the
-              \texttt{bora} partition used here (CPU model, cores per node,
-              memory, interconnect), SLURM as the scheduler}.
-        \item \textbf{Storage}: BeeGFS 
-        \item \textbf{Software stack}: SLURM, OpenMPI
-              \todoitem{4.0.1 was used, confirm}, Python~3.10 or later, IOPS,
-              IO500.
-    \end{itemize}
+The research activities of the centre cover several areas of digital
+science. These include high-performance computing and Big Data, machine
+learning, and digital health. This diversity reflects the different
+research problems addressed within the centre, ranging from fundamental
+computer science to applications in science, engineering, and health.
+For the work presented in this report, the high-performance computing
+research activities are particularly relevant.
 
-    %--------------------------------------------------------------------
-    \item \textbf{Objectives and specifications.}
-    \begin{itemize}
-        \item Distinguish what was fixed at the start from what evolved during
-              the internship, for instance the addition of the specialist
-              challenge and of the BO diagnostic harness.
-    \end{itemize}
+Several project teams at the centre work on high-performance and
+distributed computing. For example, the STORM, TADaaM, CONCACE, and TOPAL
+teams are associated with research topics related to high-performance
+computing, systems, optimisation, and the execution of parallel
+applications~\cite{inria_hpc_teams}. These teams contribute to a local
+research environment in which computing performance, system software, and
+large-scale data management are studied using both theoretical approaches
+and experiments on real HPC platforms.
 
-    %--------------------------------------------------------------------
-    \item \textbf{Organisation of the work.}
-    \begin{itemize}
-        \item Timeline of the internship: bibliography, tooling, exhaustive
-              campaign, offline study, validation campaign, writing.
-              \todoitem{a Gantt chart would work well here}
-        \item Working method: weekly meetings, Git/GitLab repositories,
-              notebooks and reproducible scripts.
-        \item Deliverables produced: the study repository, the IOPS IO500
-              configuration, this report, and the intended IOPS technical
-              report.
-    \end{itemize}
 
-\end{itemize}
+
+%     \item \textbf{The host team.}
+%     \begin{itemize}
+%         \item Team \textsc{TADaaM}
+%         \item Position of this internship inside the team's roadmap: storage
+%               performance characterisation, I/O benchmarking, and the
+%               development of the IOPS framework.
+%         \item Supervision: Luan Teylo.
+%         \item People involved in the broader IO500 effort:
+%               \todoitem{list the collaborators: people we had the meeting}.
+%     \end{itemize}
+\subsection{The host team : TADaaM~\cite{inria_tadaam}}
+
+The internship was carried out within the TADaaM project team at the
+Inria Centre at the University of Bordeaux. TADaaM works on data
+management for high-performance computing systems, with a particular
+interest in the interaction between applications, computing resources,
+networks, and storage systems. The team studies how data can be managed
+efficiently at system scale and how the characteristics of the underlying
+infrastructure affect application performance.
+
+The internship is part of the team's activities related to storage
+performance characterisation and I/O benchmarking. In particular, the
+work contributes to the study of how HPC storage systems can be configured
+and evaluated using the IO500 benchmark suite. The internship also makes
+use of IOPS, a benchmark orchestration and optimisation framework
+developed within the team. The framework provides the tools
+needed to automate benchmark executions, explore different parameter
+configurations, and collect and analyse their results.
+
+The internship was supervised by Luan Teylo, a researcher
+working within the TADaaM team. The work was also connected to a broader
+collaboration around IO500 and HPC I/O performance. Discussions involved
+Liam Radita, Sara Neuwirth, and Jay Lofstead. These interactions provided
+feedback on the benchmark configuration, experimental methodology, and
+interpretation of the results.
+
+The specific role of the internship was therefore to investigate the
+automated tuning of IO500 configurations. The work focused on the
+experimental side of this research activity, from running the benchmark
+on the target platform to evaluating automated search strategies and
+validating their results.
+
+
+
+
+%     \item \textbf{Scientific and technical environment.}
+%     \begin{itemize}
+%         \item \textbf{PlaFRIM}: the experimental platform used for all the
+%               measurements. \todoitem{describe: number of nodes, the
+%               \texttt{bora} partition used here (CPU model, cores per node,
+%               memory, interconnect), SLURM as the scheduler}.
+%         \item \textbf{Storage}: BeeGFS 
+%         \item \textbf{Software stack}: SLURM, OpenMPI
+%               \todoitem{4.0.1 was used, confirm}, Python~3.10 or later, IOPS,
+%               IO500.
+%     \end{itemize}
+
+\subsection{Scientific and technical environment}
+
+The experiments conducted during the internship were carried out on
+PlaFRIM, the experimental computing platform used by the Inria research
+community in Bordeaux. PlaFRIM provides access to several types of
+computing nodes and is designed to support experiments on high-performance
+computing systems and new hardware technologies~\cite{plafrim}.
+
+The experiments presented in this report were conducted on the
+\texttt{bora} nodes, which consist of 44 nodes, from \texttt{bora001} to
+\texttt{bora044}. Each node is equipped with two 18-core Intel Xeon Gold
+6240 processors, providing 36 physical CPU cores per node, and 192~GB of
+memory. The nodes are connected through a 100~Gbit/s Omni-Path network,
+as well as a 10~Gbit/s Ethernet network. For the experiments described in
+this report, the BeeGFS parallel file system is accessed through the
+100~Gbit/s Omni-Path network~\cite{plafrim}.
+
+The use of a dedicated and homogeneous set of nodes is important for the
+experiments carried out in this work. Since the objective is to compare
+different IO500 configurations, changes in the measured performance
+should primarily result from the parameters being studied rather than
+from differences between compute nodes.~\cite{plafrim}.
+
+The experiments were managed using SLURM, the workload manager used on
+PlaFRIM. SLURM was used to request computing resources and to execute
+benchmark experiments on the selected nodes. Depending on the experiment,
+jobs could therefore be allocated with a specified number of nodes and
+resources. This was particularly important for the internship because
+the number of compute nodes and processes is itself part of the parameter
+space explored when tuning IO500.
+
+The storage system used for the experiments is BeeGFS, a parallel file
+system designed to provide high-performance access to shared storage.
+The benchmark data and results were stored on the BeeGFS file system
+provided by PlaFRIM. In addition to BeeGFS, the \texttt{bora} nodes
+provide a local 1~TB disk mounted under \texttt{/tmp}. The experiments
+described in this report, however, focus on the performance of the
+parallel storage system rather than the local disks~\cite{plafrim}.
+
+The software environment consisted of Linux together with the tools
+required to build and execute the benchmarks. Python 3.10 was used for
+the development and execution of the scripts associated with the
+experiments. OpenMPI was used as the MPI implementation required by the
+parallel benchmark workloads. The main research tools were IO500, used
+to evaluate the I/O performance of the system, and IOPS, used to automate
+the execution and exploration of different benchmark configurations.
+
+The development process was split between the PlaFRIM environment and a
+local development machine. The source code, scripts, and experimental
+configurations were managed using Git and GitLab. This allowed the
+development work and experimental results to be kept under version
+control while the computationally intensive benchmark executions were
+performed on the cluster.
+
+
+
+%     \item \textbf{Objectives and specifications.}
+%     \begin{itemize}
+      %   \item Distinguish what was fixed at the start from what evolved during
+            %   the internship, for instance the addition of the specialist
+            %   challenge and of the BO diagnostic harness.
+%     \end{itemize}
+
+\subsection{Objectives and specifications}
+
+
+The main objective of the internship was to tune the IO500 benchmark on
+the PlaFRIM \texttt{bora} cluster and determine whether automated search
+strategies could find good configurations with fewer evaluations than an
+exhaustive search.
+
+From the beginning, the main elements of the study were fixed: IO500 was
+used as the benchmark, PlaFRIM \texttt{bora} as the target platform, and
+IOPS as the framework for running the experiments. Bayesian Optimization
+(BO) was selected as the main search strategy, with random search and
+exhaustive search used for comparison.
+
+The first stage of the internship focused on the exhaustive search. The
+objective was to explore the parameter space and obtain measurements that
+could later be used to compare the different search strategies. Each
+configuration was also evaluated several times to account for the
+variability of HPC measurements.
+
+The study then focused on comparing the different search strategies under
+a limited number of evaluations. In particular, the objective was to
+determine whether BO could find configurations close to the best
+configurations found by exhaustive search while requiring significantly
+fewer evaluations.
+
+As the internship progressed, the scope was extended to the development
+of IOPS. A plugin for running IO500 experiments was added to IOPS,
+together with an example YAML configuration describing the benchmark and
+the parameters explored during the study. This made it possible to run
+the IO500 experiments directly through IOPS and provided a reproducible
+configuration for the experiments.
+
+The IOPS documentation was also updated to describe the new functionality
+and its usage.
+
+The search component of IOPS was also extended with an implementation of
+the Tree-structured Parzen Estimator (TPE). At this stage, the method had
+been implemented but had not yet been evaluated on the IO500 experiments.
+Other optimisation methods, such as Iterated Racing (irace) and
+Covariance Matrix Adaptation Evolution Strategy (CMA-ES), were also
+considered as possible extensions.
+
+These additional tasks emerged as the project evolved and extended the
+initial scope of the internship.
+
+
+
+%--------------------------------------------------------------------
+%     \item \textbf{Organisation of the work.}
+%     \begin{itemize}
+%         \item Timeline of the internship: bibliography, tooling, exhaustive
+%               campaign, offline study, validation campaign, writing.
+%               \todoitem{a Gantt chart would work well here}
+%         \item Working method: weekly meetings, Git/GitLab repositories,
+%               notebooks and reproducible scripts.
+%         \item Deliverables produced: the study repository, the IOPS IO500
+%               configuration, this report, and the intended IOPS technical
+%               report.
+%     \end{itemize}
+\subsection{Organisation of the work}
+
+The internship took place from 14 April to 16 September. The work was
+organised progressively, starting with the study of the existing tools and
+the experimental environment, followed by the experimental campaigns and
+the development work.
+
+The work was supervised by Luan Teylo through a weekly meeting of
+approximately 30 minutes. These meetings were used to review the progress
+of the work, discuss experimental results, and define the next tasks.
+Notes and follow-up tasks were recorded using the Inria Notes platform.
+Mattermost was also used for communication.
+
+The work was managed using Git and GitLab. A personal repository was used
+to keep track of the work carried out during the internship, while the
+IOPS team repository was used for contributions to the existing IOPS
+project. This allowed the development work and experimental scripts to be
+versioned throughout the internship.
+
+The internship also included a meeting with Liam Radita, Sara Neuwirth,
+and Jay Lofstead as part of the broader collaboration around the IO500
+work.
+
