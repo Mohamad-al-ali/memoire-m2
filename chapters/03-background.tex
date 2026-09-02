@@ -9,38 +9,38 @@ to provide a common and reproducible way of measuring storage performance
 across different systems and configurations~\cite{io500about}.
 
 Rather than measuring a single aspect of I/O performance, IO500 combines
-several workloads that represent different types of storage operations.
+several benchmarks that represent different types of storage operations.
 The results can then be used both to characterise a system and to compare
 it with other systems through the public IO500 ranking~\cite{io500list}.
 
 In this work, IO500 is used as the objective to optimise. The following
-subsections describe how the suite is organised, which workloads it uses,
+subsections describe how the suite is organised, which benchmarks it uses,
 how its score is computed, and which execution rules and configuration
 parameters are relevant to the experiments.
 
 \subsubsection{Benchmark structure}
 
 IO500 is a benchmark suite rather than a single benchmark program. It
-combines several workloads that evaluate different aspects of I/O
+combines several benchmarks that evaluate different aspects of I/O
 performance. The suite provides a common framework for running these
-workloads and collecting their results under the same experimental
+benchmarks and collecting their results under the same experimental
 conditions~\cite{io500about}.
 
 The benchmark is organised into a sequence of tests. Each test runs a
-specific workload on the storage system and produces a performance
+specific benchmark on the storage system and produces a performance
 measurement. These measurements are kept separately because they
-represent different aspects of I/O performance. For example, a workload
+represent different aspects of I/O performance. For example, a benchmark
 may focus on the amount of data transferred per second, while another
 may measure the rate of file-system metadata operations.
 
-The workloads are executed using a set of parameters that describe how
+The benchmarks are executed using a set of parameters that describe how
 the benchmark should use the available computing and storage resources.
 These parameters can include the number of compute nodes, the number of
-processes, and file-system settings. The same workload can therefore
+processes, and file-system settings. The same benchmark can therefore
 produce different results depending on the configuration used for the
 run.
 
-After the individual workloads have been executed, their results are
+After the individual benchmarks have been executed, their results are
 combined to produce the overall IO500 score. The score provides a single
 value that can be used to compare different storage systems or different
 configurations of the same system. The individual results are also
@@ -56,76 +56,84 @@ and allows the conditions of different submissions to be compared.
 The suite is used to produce several public lists, including the
 Production and Research lists. These lists group results according to
 the conditions under which the systems were evaluated~\cite{io500list}.
-The following subsection describes the main workloads included in IO500
+The following subsection describes the main benchmarks included in IO500
 and the type of I/O operations measured by each of them.
-\subsubsection{IO500 workloads}
+\subsubsection{IO500 benchmark tests}
 
-IO500 combines several workloads in order to evaluate different aspects
-of storage performance. The current mandatory benchmark includes
+IO500 combines several benchmark tests in order to evaluate different
+aspects of storage performance. The current mandatory benchmark includes
 \texttt{ior-easy}, \texttt{ior-hard}, \texttt{mdtest-easy},
 \texttt{mdtest-hard}, and \texttt{find}~\cite{io500about,io500rules}.
-The workloads are based on IOR, mdtest, and pfind, which are included
-with the IO500 software.
+These tests are based on IOR, mdtest, and pfind, which are included with
+the IO500 software.
 
-The IOR workloads focus on data transfer performance. They measure how
+The IOR tests focus on data transfer performance. They measure how
 quickly data can be written to and read from the storage system. The
-\texttt{ior-easy} workload uses a relatively regular access pattern,
-while \texttt{ior-hard} uses a more demanding pattern. These two
-workloads therefore provide complementary measurements of bandwidth
-performance.
+\texttt{ior-easy} test uses a relatively regular access pattern, while
+\texttt{ior-hard} uses a more demanding pattern. These two tests
+therefore provide complementary measurements of bandwidth performance.
 
-The mdtest workloads focus on metadata operations. Instead of measuring
+The mdtest benchmarks focus on metadata operations. Instead of measuring
 the amount of data transferred, they measure operations such as creating,
 stat-ing, reading, and deleting files. The \texttt{mdtest-easy} and
-\texttt{mdtest-hard} workloads use different configurations to exercise
-the metadata system under different conditions.
+\texttt{mdtest-hard} tests use different configurations to exercise the
+metadata system under different conditions.
 
-The \texttt{find} workload measures the performance of searching for
-files and directories. This operation is different from the operations
+The \texttt{find} test measures the performance of searching for files
+and directories. This operation is different from the operations
 performed by IOR and mdtest because it involves searching through the
 file-system namespace.
 
-The benchmark therefore combines workloads that stress different parts
-of the storage system. IOR mainly contributes to the bandwidth
-measurement, while mdtest and find provide information about metadata
-and namespace performance. The individual results are kept separately
-and are then used to compute the final IO500 score~\cite{io500about}.
+The benchmark therefore combines tests that stress different parts of the
+storage system. IOR mainly contributes to the bandwidth measurement,
+while mdtest and find provide information about metadata and namespace
+performance. The individual results are kept separately and are then
+used to compute the final IO500 score~\cite{io500about}.
 
-Table~\ref{tab:io500-workloads} summarises the main workloads used in
+Table~\ref{tab:io500-tests} summarises the main benchmark tests used in
 this work.
 
-\begin{table}[ht]
-    \centering
-    \caption{Main IO500 workloads used in this work.}
-    \label{tab:io500-workloads}
-    \begin{tabular}{lll}
-        \hline
-        Workload & Main tool & Main aspect measured \\
-        \hline
-        \texttt{ior-easy}  & IOR    & Sequential I/O bandwidth \\
-        \texttt{ior-hard}  & IOR    & More demanding I/O pattern \\
-        \texttt{mdtest-easy} & mdtest & Metadata performance \\
-        \texttt{mdtest-hard} & mdtest & Metadata performance \\
-        \texttt{find} & pfind & File-system search \\
-        \hline
-    \end{tabular}
+\begin{table}[H]
+\centering
+\caption{Main IO500 benchmark tests used in this work.}
+\label{tab:io500-tests}
+
+```
+\rowcolors{2}{gray!10}{white}
+\begin{tabular}{lll}
+    \hline
+    \rowcolor{gray!30}
+    Test & Main tool & Main aspect measured \\
+    \hline
+
+    \texttt{ior-easy}  & IOR    & Sequential I/O bandwidth \\
+    \texttt{ior-hard}  & IOR    & More demanding I/O pattern \\
+    \texttt{mdtest-easy} & mdtest & Metadata performance \\
+    \texttt{mdtest-hard} & mdtest & Metadata performance \\
+    \texttt{find} & pfind & File-system search \\
+
+    \hline
+\end{tabular}
+```
+
 \end{table}
 
 The next subsection explains how these individual measurements are
 combined into the IO500 score and how this score is used for ranking
 systems.
 
+
 \subsubsection{Scoring and ranking}
 
-Each IO500 workload produces an individual performance result. These
+Each IO500 benchmark produces an individual performance result. These
 results use different units depending on the type of operation. For
-example, IOR measures bandwidth, while metadata and search workloads
+example, IOR measures bandwidth, while metadata and search benchmarks
 measure the rate of file-system operations.
 
 Since these results are not directly comparable, IO500 converts them into
 scores and combines them to obtain an overall score. The scores of the
-different workloads are combined using a geometric mean. For a set of
-$n$ workload scores $s_1, s_2, \ldots, s_n$, the combined score is
+different benchmarks are combined using a geometric mean. For a set of
+$n$ benchmark scores $s_1, s_2, \ldots, s_n$, the combined score is
 computed as
 
 \begin{equation}
@@ -135,12 +143,12 @@ S =
 \right)^{1/n}.
 \end{equation}
 
-The use of the geometric mean gives importance to all workloads. A low
-score in one workload can therefore reduce the overall score even if the
-other workloads perform well. This makes it difficult to obtain a high
+The use of the geometric mean gives importance to all benchmarks. A low
+score in one benchmark can therefore reduce the overall score even if the
+other benchmarks perform well. This makes it difficult to obtain a high
 overall score by optimising only one aspect of I/O performance.
 
-The IO500 workloads cover different aspects of storage performance,
+The IO500 benchmarks cover different aspects of storage performance,
 including bandwidth, metadata operations, and file-system search. Their
 individual results are combined according to the scoring rules defined by
 IO500~\cite{io500rules}. The resulting score provides a single value that
@@ -162,7 +170,7 @@ that maximise this value.
 
 IO500 defines several rules for running the benchmark. These rules are
 important because they make it possible to compare results obtained on
-different systems. In particular, the benchmark requires some workloads
+different systems. In particular, the benchmark requires some benchmarks
 to run for a minimum amount of time.
 
 For an official IO500 submission, the stonewall timer is set to
@@ -181,12 +189,12 @@ have to be tested, running every configuration with the official rules
 would therefore be very expensive.
 
 During the first experiments, we used a shorter stonewall time and small
-workloads. The goal was to check that IO500 was correctly installed and
+benchmarks. The goal was to check that IO500 was correctly installed and
 configured, and to estimate the execution time of a benchmark run.
 These tests were not valid IO500 submissions because they did not follow
 the official execution time requirements.
 
-For example, one of the first tests was run with very small workload
+For example, one of the first tests was run with very small benchmark
 parameters. The benchmark finished the write phases before the required
 time and reported the result as invalid. An example of this execution
 is shown in Figure~\ref{fig:io500-invalid-run}.
@@ -194,7 +202,7 @@ is shown in Figure~\ref{fig:io500-invalid-run}.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.90\textwidth]{figures/io500_invalid_run.png}
-\caption{Example of an invalid IO500 run using a shortened workload.
+\caption{Example of an invalid IO500 run using a shortened benchmark.
 The test was used to verify the benchmark configuration and
 estimate its execution time.}
 \label{fig:io500-invalid-run}
