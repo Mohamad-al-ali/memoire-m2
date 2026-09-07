@@ -50,7 +50,7 @@ is explained in more detail in the following paragraphs.
     Machine & \texttt{processes-per-node} & Number of processes per node \\
     \hline
 
-    BeeGFS & \texttt{num-targets} & Number of storage targets used \\
+    BeeGFS & \texttt{ost\_count} & Number of storage targets used \\
     \hline
 \end{tabular}
 
@@ -122,7 +122,7 @@ access the storage system simultaneously.
 \paragraph{Parallel file system parameter.}
 
 The experiments use BeeGFS as the parallel file system. The
-\texttt{num-targets} parameter controls the number of storage targets used
+\texttt{ost\_count} parameter controls the number of storage targets used
 to distribute file data.
 
 Using a larger number of targets can distribute I/O operations across
@@ -154,47 +154,285 @@ reference for the evaluation of the search strategies.
 \subsection{Exhaustive search}
 \label{sec:exhaustive-search}
 
-\subsubsection{Search space}
-\label{sec:search-space}
+The first approach used in this study was exhaustive search. The idea was
+to test every possible configuration in the parameter space in order to
+identify the best IO500 configuration.
 
-\subsubsection{Cheap evaluation setup}
-\label{sec:cheap-evaluation}
+The goal of this work is not to use exhaustive search as a practical
+tuning method. Testing all configurations is too expensive for this
+purpose. Instead, exhaustive search is used to create a reference dataset.
+This reference contains the results of all tested configurations and can
+later be used to compare Random Search and the different Bayesian
+Optimization methods.
 
-\subsubsection{Repetitions}
-\label{sec:exhaustive-repetitions}
+\paragraph{Cost of a valid exhaustive search.}
+
+The most direct way to build this reference would be to run every
+configuration using the official IO500 settings. However, this would take
+too much time.
+
+Before starting the experiments, IOPS was used to estimate the execution
+time required for the complete exhaustive search. With valid IO500
+executions, the estimated duration was approximately 161 days.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]
+    {figures/exhaustive-time-estimation.png}
+    \caption{Execution time estimated by IOPS for an exhaustive search
+    using valid IO500 executions.}
+    \label{fig:exhaustive-time}
+\end{figure}
+
+This duration was close to the complete length of the internship, which
+lasted five months. In addition, the experiments were executed on the
+PlaFRIM \texttt{bora} nodes. These nodes are shared with other users.
+Running the complete exhaustive search with valid IO500 executions would
+therefore require using and reserving compute resources for a very long
+period. This was not practical on a shared research platform.
+
+\paragraph{Reduced-cost IO500 executions.}
+
+For this reason, a faster way to evaluate the configurations was needed.
+The idea was to reduce the cost of each IO500 execution.
+
+Two main changes were made. First, the stonewall time was reduced from
+300 seconds to 10 seconds. Second, the size-related parameters used in
+the benchmark were divided by 10. These changes reduced the amount of
+work performed during each execution and made the tests much faster.
+
+With these reduced settings, some IO500 phases do not satisfy the
+official execution requirements. The final IO500 result is therefore
+marked as \texttt{INVALID}. These results cannot be used as official
+IO500 submissions.
+
+However, the purpose of these short tests is not to produce an official
+IO500 score. Their purpose is to provide a cheaper way to compare
+configurations under the same experimental conditions.
+
+The main question was therefore whether these short executions could
+still give useful information about the quality of a configuration. In
+particular, we wanted to know whether configurations that perform well
+with the reduced settings also tend to perform well with valid IO500
+settings.
+
+\paragraph{Comparison between valid and invalid executions.}
+
+To study this question, several configurations were executed using both
+the reduced and the valid IO500 settings. Their scores and bandwidth
+results were then compared.
+
+Figure~\ref{fig:valid-invalid-comparison} shows this comparison.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]
+    {figures/comparaison_scores_bandwidth.png}
+    \caption{Comparison of IO500 scores obtained with valid and invalid
+    executions for selected configurations.}
+    \label{fig:valid-invalid-comparison}
+\end{figure}
+
+The comparison shows that the scores obtained with short executions are
+different from the valid IO500 scores. The difference is also not the
+same for every configuration. Therefore, a simple correction value
+cannot be used to convert an invalid score into a valid score.
+
+However, reproducing the exact valid score is not the objective of the
+reduced-cost tests. What matters for this study is whether they provide
+enough information to distinguish good configurations from poor ones.
+If a good configuration can still be identified with a short execution,
+the complete parameter space can be explored at a much lower cost.
+
+For this reason, the reduced settings were used for the exhaustive
+search. All configurations were evaluated under the same conditions,
+which makes their results comparable within this study.
+
+\paragraph{Repetitions.}
+
+I/O performance can vary between executions, even when the same
+configuration is used. Temporary activity on the compute or storage
+system can affect the measured performance.
+
+For this reason, each configuration was executed three times. These
+repetitions reduce the effect of temporary variations and provide more
+information about the stability of each configuration.
+
+The exhaustive search contained 4,830 possible configurations. With
+three repetitions for each configuration, the complete experiment
+therefore represented:
+
+\[
+4\,830 \times 3 = 14\,490
+\]
+
+IO500 executions.
+
+All repetitions used the same reduced-cost settings, including the
+10-second stonewall time and the reduced size-related parameters.
+
+\paragraph{Execution with IOPS.}
+
+The experiments were defined using a YAML configuration file interpreted
+by IOPS. This file contains the benchmark settings, the parameter values,
+the execution method, the SLURM configuration, and the way the results
+are collected.
+
+The parameters that have to be explored are defined in the
+\texttt{vars} section. For example, the number of nodes, the number of
+processes per node, the transfer size, the number of storage targets,
+\texttt{file\_per\_proc}, and \texttt{unique\_dir} can each take several
+values.
+
+Some parameters are not explored directly but are computed from other
+parameters. For example, the total number of MPI tasks is calculated as:
+
+\[
+\texttt{ntasks} =
+\texttt{nodes} \times \texttt{processes\_per\_node}.
+\]
+
+The block size is also computed from the total data size and the number
+of tasks:
+
+\[
+\texttt{block\_size\_mb} =
+\frac{\texttt{total\_size\_gb} \times 1024}
+{\texttt{ntasks}}.
+\]
+
+IOPS can also apply constraints before running a configuration. In this
+study, the block size had to be a multiple of the transfer size. Invalid
+combinations were skipped automatically:
+
+\begin{verbatim}
+constraints:
+  - name: "block_transfer_alignment"
+    rule: "block_size_mb % transfer_size_mb == 0"
+    violation_policy: "skip"
+\end{verbatim}
+
+This is important because not every mathematical combination of the
+parameter values represents a valid IO500 configuration.
+
+The YAML file is also used to generate the IO500 configuration file for
+each execution. IOPS replaces the parameter values in the template before
+submitting the job. For example, the transfer size, block size,
+file-per-process option, and storage directory are generated from the
+values selected for the current configuration.
+
+The execution itself is submitted to SLURM. The job script defines the
+number of nodes, the total number of MPI tasks, and the number of
+processes per node. The jobs are executed on the PlaFRIM
+\texttt{bora} nodes using an exclusive allocation.
+
+Each configuration is executed three times, as defined by:
+
+\begin{verbatim}
+repetitions: 3
+\end{verbatim}
+
+The search strategy is also selected directly in the YAML file. This
+means that the same benchmark definition can be used with Exhaustive
+Search, Random Search, or Bayesian Optimization by changing the search
+method while keeping the rest of the experimental setup unchanged.
+
+\paragraph{Result collection.}
+
+After each execution, IOPS parses the IO500 output and extracts the main
+performance metrics. In this study, the parser collects the overall
+IO500 score, the bandwidth result, and the metadata result:
+
+\begin{verbatim}
+metrics:
+  - name: SCORE
+  - name: BW
+  - name: MD
+\end{verbatim}
+
+IOPS also stores information about the configuration and the execution.
+At the end of the experiment, these values are written to a CSV file,
+with one row for each execution.
+
+The result file contains several groups of columns. The
+\texttt{vars.*} columns describe the configuration used for the
+execution. They include, for example,
+\texttt{vars.nodes},
+\texttt{vars.processes\_per\_node},
+\texttt{vars.transfer\_size\_mb},
+\texttt{vars.ost\_count},
+\texttt{vars.file\_per\_proc}, and
+\texttt{vars.unique\_dir}.
+
+The \texttt{execution.*} columns identify the execution and its
+repetition. The \texttt{metadata.*} columns contain information about
+the SLURM job and the machine on which it was executed. Finally, the
+\texttt{metrics.*} columns contain the IO500 results, in particular
+\texttt{metrics.SCORE}, \texttt{metrics.BW}, and
+\texttt{metrics.MD}.
+
+This CSV file therefore gives, for every execution, both the parameter
+values that were used and the performance obtained with these values.
+It is the main source of data used to build the reference dataset for the
+rest of the study.
 
 \subsection{Ground-truth construction}
 \label{sec:ground-truth}
 
+The exhaustive search produced a large number of IO500 results for the
+parameter space used in this study. These results were then used to build
+a reference dataset for comparing the different search methods.
+
+For each execution, IOPS stores the parameter values and the corresponding
+IO500 results. The main information used in this study includes the
+configuration parameters, the repetition number, and the three main
+metrics: \texttt{SCORE}, \texttt{BW}, and \texttt{MD}.
+
+Each configuration was executed three times. This provides several
+measurements for the same configuration and helps reduce the effect of
+temporary performance variations. It also gives a more reliable view of
+the performance of each configuration.
+
+The resulting dataset is used as the ground truth in this study. Here,
+ground truth does not mean that the results are official valid IO500
+results. As explained in the previous section, the exhaustive search was
+performed with shorter IO500 executions, which are marked as
+\texttt{INVALID}. The ground truth is therefore a reference for the
+reduced-cost setup used in this work.
+
+The main advantage of this dataset is that the results of all tested
+configurations are already known. It is therefore possible to identify
+the best configuration in the reference dataset.
+
+This reference is then used to evaluate the search methods. For example,
+if Bayesian Optimization is allowed to test only 40 configurations, the
+best configuration it finds can be compared with the best configuration
+in the complete reference dataset. This shows how close the method gets
+to the best known result with only a small number of evaluations.
+
+\paragraph{Caching and offline evaluation.}
+
+The results were also stored in the IOPS cache file
+\texttt{io500.db}. The cache links each configuration to the result
+already measured for it.
+
+This is useful when comparing Random Search and Bayesian Optimization.
+When a search method selects a configuration, there is no need to run
+IO500 again. IOPS can directly read the result from the cache.
+
+The \texttt{--cache-only} option was used for this purpose. With this
+option, IOPS only uses results already stored in the cache and does not
+submit new jobs to the cluster.
+
+This makes it possible to repeat the search experiments many times
+without using additional \texttt{bora} resources. It also ensures that
+all search methods are compared using the same IO500 measurements.
+
+The reference dataset and the cache are therefore used for the offline
+comparison of the search methods described in the next section.
+
+
 \subsection{Search strategies}
-\label{sec:search-strategies}
-
-\subsubsection{Random search}
-\label{sec:random-search}
-
-\subsubsection{Bayesian Optimization}
-\label{sec:bo-methodology}
-
-\subsubsection{BO configurations}
-\label{sec:bo-configurations}
-
-% \subsection{Experimental protocol}
-% \label{sec:experimental-protocol}
-
-% \subsubsection{Evaluation budget}
-% \label{sec:evaluation-budget}
-
-% \subsubsection{Random seeds}
-% \label{sec:random-seeds}
-
-% \subsubsection{Repetitions}
-% \label{sec:protocol-repetitions}
-
-% \subsubsection{Offline evaluation}
-% \label{sec:offline-evaluation}
-
-% \subsection{Validation campaign}
-% \label{sec:validation}
-
-% \subsection{Human specialist baseline}
-% \label{sec:human-baseline}
+    \subsubsection{Random Search}
+    \subsubsection{Bayesian Optimization}
+    \subsubsection{Bayesian Optimization configurations}
