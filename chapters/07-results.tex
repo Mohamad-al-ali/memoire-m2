@@ -1,0 +1,79 @@
+% !TeX root = ../main.tex
+\section{Results}
+\label{sec:results}
+
+% =============================================================================
+% Figures already produced are in study/presentation/figures/ and
+% study/search_comparison/results_full/ -- reuse them, do not redraw by hand.
+% All the numbers below come from the study notes and CSVs; RE-EXTRACT each of
+% them from the final results directory before writing, and say which one.
+% =============================================================================
+
+\subsection{Characterisation of the response surface}
+
+\begin{itemize}
+    \item Distribution of the SCORE over the whole measured grid: how many
+          configurations are near-optimal, and how heavy is the tail.
+          (\texttt{score\_distribution.csv},
+          \texttt{fig\_score\_distribution.png})
+    \item 2D projections of the response surface
+          (\texttt{fig\_response\_surface\_2d.png}): show that the landscape
+          is neither convex nor separable.
+    \item \textbf{Takeaway to state explicitly}: the optimum is isolated and
+          the surface has interactions, which is why coordinate-wise greedy
+          tuning is structurally at a disadvantage.
+\end{itemize}
+
+\subsection{Which Bayesian Optimization setup wins?}
+
+\begin{itemize}
+    \item Ranking of the 83 BO configurations
+          (\texttt{best\_setup\_ranking.png}).
+    \item \textbf{Main finding: the surrogate matters most -- the top-5 setups
+          are all Gaussian Process.} Acquisition (LCB vs EI) is close to a tie
+          at the top.
+    \item Sensitivity analysis, one knob at a time: rank the influence of
+          estimator, acquisition, $\xi$/$\kappa$ and $n_{\text{initial}}$.
+    \item Practical recommendation for a practitioner who will run this once:
+          state a single default tuple (surrogate, acquisition, exploration,
+          $n_{\text{initial}}$) and justify it.
+\end{itemize}
+
+
+
+
+
+\subsection{Why random search is not enough}
+
+\begin{itemize}
+    \item Analytic argument from the measured score distribution: reaching
+          SCORE $\geq$ 15 with 90\,\% probability by chance requires
+          $\approx 1{,}081$ tests.
+    \item \textbf{Takeaway}: the near-optimal tail is effectively unreachable
+          by luck; random search is a good baseline for \emph{average}
+          quality and a bad strategy for \emph{peak} quality.
+    \item Nuance to keep (it is honest and it strengthens the report): at very
+          low budgets, random is competitive with, and sometimes better than,
+          the tree-based surrogates.
+\end{itemize}
+
+
+
+\subsection{Automated search versus a human specialist}
+
+\begin{itemize}
+    \item Protocol recap and the specialist's submitted candidates.
+    \item \textbf{Result: the expert's best informed pick reached
+          $\approx$ 95\,\% of the optimum; BO with 40 evaluations reached
+          $\approx$ 98\,\%} (\texttt{specialist\_vs\_bo.png}).
+    \item Discuss fairly: the expert answered in minutes and without access to
+          the machine's response surface; the interesting claim is not ``the
+          machine beats the human'' but ``a modest automated budget matches or
+          exceeds expert intuition, reproducibly''.
+    \item Limitation to state: only one specialist has submitted so far, so
+          this is an illustration, not a statistically meaningful comparison.
+\end{itemize}
+
+\subsection{Validation with valid IO500 runs}
+
+
