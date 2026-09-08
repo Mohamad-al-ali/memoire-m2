@@ -305,12 +305,16 @@ IOPS can also apply constraints before running a configuration. In this
 study, the block size had to be a multiple of the transfer size. Invalid
 combinations were skipped automatically:
 
-\begin{verbatim}
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
 constraints:
   - name: "block_transfer_alignment"
     rule: "block_size_mb % transfer_size_mb == 0"
     violation_policy: "skip"
-\end{verbatim}
+\end{minted}
 
 This is important because not every mathematical combination of the
 parameter values represents a valid IO500 configuration.
@@ -328,9 +332,13 @@ processes per node. The jobs are executed on the PlaFRIM
 
 Each configuration is executed three times, as defined by:
 
-\begin{verbatim}
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
 repetitions: 3
-\end{verbatim}
+\end{minted}
 
 The search strategy is also selected directly in the YAML file. This
 means that the same benchmark definition can be used with Exhaustive
@@ -343,12 +351,16 @@ After each execution, IOPS parses the IO500 output and extracts the main
 performance metrics. In this study, the parser collects the overall
 IO500 score, the bandwidth result, and the metadata result:
 
-\begin{verbatim}
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
 metrics:
   - name: SCORE
   - name: BW
   - name: MD
-\end{verbatim}
+\end{minted}
 
 IOPS also stores information about the configuration and the execution.
 At the end of the experiment, these values are written to a CSV file,
@@ -432,7 +444,3 @@ The reference dataset and the cache are therefore used for the offline
 comparison of the search methods described in the next section.
 
 
-\subsection{Search strategies}
-    \subsubsection{Random Search}
-    \subsubsection{Bayesian Optimization}
-    \subsubsection{Bayesian Optimization configurations}
