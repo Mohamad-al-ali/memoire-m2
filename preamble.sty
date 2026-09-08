@@ -21,6 +21,15 @@
 \usepackage{minted}
 \usepackage[table]{xcolor}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc}
+
+% Palette for the hand-drawn TikZ diagrams. The fills differ in lightness as
+% well as in hue so the figures stay readable when the report is printed in
+% greyscale.
+\definecolor{wfstroke}{HTML}{33475B}
+\definecolor{wffill}{HTML}{E8EFF6}
+\definecolor{wfcachestroke}{HTML}{B35C00}
+\definecolor{wfcachefill}{HTML}{FBF0DE}
 \usepackage[hidelinks]{hyperref}
 \usepackage{pgfplots, pgfplotstable, svg}
 \usepackage[font=small]{caption}
