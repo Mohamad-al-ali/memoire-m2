@@ -13,3 +13,6 @@
 *.run.xml
 _minted-*/
 svg-inkscape/
+main.pdf
+_minted/
+.vscode/

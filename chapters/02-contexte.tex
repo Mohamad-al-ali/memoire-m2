@@ -1,4 +1,14 @@
+% !TeX root = ../main.tex
 \section{Context of the internship}
+
+
+\add{This section describes the context in which
+the internship took place. We first present Inria and the Inria Centre at
+the University of Bordeaux, followed by TADaaM, the team that hosted the
+internship. We then describe the scientific and technical environment in
+which the work was carried out, the objectives that were defined for the
+internship, and the way the work was organised.} 
+
 \label{sec:context}
 
 % GOAL (2-3 pages). Say where you were, with whom, on what, and how the work
@@ -24,12 +34,12 @@ engineers, PhD students, and other scientific staff around common research
 topics.
 
 The internship was carried out at the Inria Centre at the University of
-Bordeaux. The centre is located on the Talence campus and brings together
-research teams working on different areas of digital science. Inria
-currently has 22 project teams associated with the centre, including 20
-teams located in Talence and two teams in Pau. The centre brings together
+Bordeaux. The centre is located on the Talence \replace{campus and brings together
+research teams working on different areas of digital science. Inria}{and}
+currently has 22 project teams \replace{associated with the centre, including}{(20
+teams located in Talence and two teams in Pau)}. The centre brings together
 more than 470 researchers, engineers, technical staff, and other members
-of the research and innovation community. These teams are developed in
+of the research and innovation community. These \replace{teams}{groups} are developed in
 partnership with institutions such as the University of Bordeaux,
 Bordeaux INP, CNRS, Inserm, INRAE, and other academic and industrial
 partners~\cite{inria_bordeaux}.
@@ -42,11 +52,13 @@ computer science to applications in science, engineering, and health.
 For the work presented in this report, the high-performance computing
 research activities are particularly relevant.
 
-Several project teams at the centre work on high-performance and
-distributed computing. For example, the STORM, TADaaM, CONCACE, and TOPAL
-teams are associated with research topics related to high-performance
+\replace{Several project teams at the centre work on high-performance and
+distributed computing. For example, STORM, TADaaM and CONCACE are associated
+with research topics related to high-performance computing, systems,
+optimisation, and the execution of parallel applications}{In the centre, the
+STORM, TADaaM, and CONCACE teams conduct research on high-performance
 computing, systems, optimisation, and the execution of parallel
-applications~\cite{inria_hpc_teams}. These teams contribute to a local
+applications}~\cite{inria_hpc_teams}. These teams contribute to a local
 research environment in which computing performance, system software, and
 large-scale data management are studied using both theoretical approaches
 and experiments on real HPC platforms.
@@ -63,37 +75,37 @@ and experiments on real HPC platforms.
 %         \item People involved in the broader IO500 effort:
 %               \todoitem{list the collaborators: people we had the meeting}.
 %     \end{itemize}
-\subsection{The host team : TADaaM~\cite{inria_tadaam}}
+\subsection{The host team: TADaaM}
 
-The internship was carried out within the TADaaM project team at the
-Inria Centre at the University of Bordeaux. TADaaM works on data
+The internship was carried out within TADaaM~\cite{inria_tadaam}\del{ team at
+the Inria Centre at the University of Bordeaux}. \replace{TADaaM}{The team} works on data
 management for high-performance computing systems, with a particular
 interest in the interaction between applications, computing resources,
-networks, and storage systems. The team studies how data can be managed
+networks, and storage systems. \replace{The team}{It} studies how data can be managed
 efficiently at system scale and how the characteristics of the underlying
 infrastructure affect application performance.
 
 The internship is part of the team's activities related to storage
 performance characterisation and I/O benchmarking. In particular, the
 work contributes to the study of how HPC storage systems can be configured
-and evaluated using the IO500 benchmark suite. The internship also makes
-use of IOPS, a benchmark orchestration and optimisation framework
+and evaluated using the IO500 benchmark suite\cite{io500about}. The internship also makes
+use of IOPS\cite{iops}, a benchmark orchestration and optimisation framework
 developed within the team. The framework provides the tools
 needed to automate benchmark executions, explore different parameter
 configurations, and collect and analyse their results.
 
 The internship was supervised by Luan Teylo, a researcher
 working within the TADaaM team. The work was also connected to a broader
-collaboration around IO500 and HPC I/O performance. Discussions involved
-Liam Radita, Sara Neuwirth, and Jay Lofstead. These interactions provided
+collaboration \add{with international researchers that collaborate with the} IO500 consortium. \del{Discussions involved
+Liam Radita, Sara Neuwirth, and Jay Lofstead}. These interactions provided
 feedback on the benchmark configuration, experimental methodology, and
 interpretation of the results.
 
-The specific role of the internship was therefore to investigate the
+\del{The specific role of the internship was therefore to investigate the
 automated tuning of IO500 configurations. The work focused on the
 experimental side of this research activity, from running the benchmark
 on the target platform to evaluating automated search strategies and
-validating their results.
+validating their results.}
 
 
 
@@ -123,9 +135,9 @@ The experiments presented in this report were conducted on the
 \texttt{bora044}. Each node is equipped with two 18-core Intel Xeon Gold
 6240 processors, providing 36 physical CPU cores per node, and 192~GB of
 memory. The nodes are connected through a 100~Gbit/s Omni-Path network,
-as well as a 10~Gbit/s Ethernet network. For the experiments described in
+as well as a 10~Gbit/s Ethernet network. \del{For the experiments described in
 this report, the BeeGFS parallel file system is accessed through the
-100~Gbit/s Omni-Path network~\cite{plafrim}.
+100~Gbit/s Omni-Path network~\cite{plafrim}.}
 
 The use of a dedicated and homogeneous set of nodes is important for the
 experiments carried out in this work. Since the objective is to compare
@@ -144,10 +156,11 @@ space explored when tuning IO500.
 The storage system used for the experiments is BeeGFS, a parallel file
 system designed to provide high-performance access to shared storage.
 The benchmark data and results were stored on the BeeGFS file system
-provided by PlaFRIM. In addition to BeeGFS, the \texttt{bora} nodes
+provided by PlaFRIM. \add{The parallel file system is accessed through a
+100~Gbit/s Omni-Path network.} In addition to BeeGFS, the \texttt{bora} nodes
 provide a local 1~TB disk mounted under \texttt{/tmp}. The experiments
 described in this report, however, focus on the performance of the
-parallel storage system rather than the local disks~\cite{plafrim}.
+parallel storage system rather than the local disks~\cite{plafrim}. 
 
 The software environment consisted of Linux together with the tools
 required to build and execute the benchmarks. Python was used for
@@ -252,7 +265,9 @@ IOPS team repository was used for contributions to the existing IOPS
 project. This allowed the development work and experimental scripts to be
 versioned throughout the internship.
 
-The internship also included a meeting with Liam Radita, Sara Neuwirth,
-and Jay Lofstead as part of the broader collaboration around the IO500
-work.
+The internship also included a meeting with \replace{Liam Radita, Sara
+Neuwirth, and Jay Lofstead}{Radita Liem and Sarah Neuwirth (both
+Johannes Gutenberg University Mainz), and Jay Lofstead (Sandia National
+Laboratories)} as part of the broader collaboration around the
+IO500 work.
 
