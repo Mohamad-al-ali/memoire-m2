@@ -12,6 +12,34 @@
 
 \todoitem{Write the abstract last.}
 
+High-performance computing applications increasingly depend on the
+performance of parallel storage systems. IO500 is widely used to evaluate
+these systems, but its performance strongly depends on many configuration
+parameters. Finding a good configuration is difficult because a valid
+IO500 execution is expensive, and an exhaustive search over all possible
+configurations can require more than one year of computing time. This
+internship studied how guided search methods can reduce this tuning cost.
+The experiments were carried out with IOPS, a benchmark orchestration
+framework used to generate configurations, execute IO500, collect results,
+and cache previous measurements. To make the exhaustive study possible, a
+reduced-cost IO500 setup was used, reducing the estimated cost from more
+than one year to about 183 hours. The resulting dataset was then used to
+compare Random Search and several Bayesian Optimization configurations.
+The results show that Bayesian Optimization can reach approximately 98\%
+of the best score with about 40--60 evaluations. Among the tested
+configurations, Gaussian Process was the best surrogate model, while LCB
+and EI gave similar results at the top. A comparison with a human
+specialist also showed that expert tuning reached about 95\% of the
+optimum, while Bayesian Optimization reached about 98\%. Finally, the
+internship contributed to IOPS by adding IO500 support, updating its
+documentation, and implementing TPE as an additional search method. These
+results show that guided search is a promising way to reduce the cost of
+IO500 tuning.
+
+\vspace{1em}
+
+\noindent\textbf{Keywords:} HPC, parallel I/O, IO500, auto-tuning,
+Bayesian Optimization, benchmarking, reproducibility.
 \vspace{1em}
 \noindent\textbf{Keywords:} HPC, parallel I/O, IO500, auto-tuning, Bayesian
 Optimization, benchmarking, reproducibility.
