@@ -188,6 +188,13 @@ comparison possible.}
     \item \emph{A cheap ground-truth methodology} to evaluate search strategies
           for tuning IO500, based on a set of invalid scores that are much
           cheaper to generate but still allow the strategies to be compared.
+    \item \add{\emph{A reference dataset of IO500 executions} collected on the
+          PlaFRIM \texttt{bora} nodes. It covers the 4\,830 configurations of
+          the studied parameter space with three repetitions each, for a total
+          of 14\,490 executions (Section~\ref{sec:ground-truth}). Each entry
+          records the parameter values and the SCORE, BW and MD metrics. The
+          dataset is also stored as an IOPS cache, so new search strategies
+          can be evaluated on it offline without using cluster time.}
     \item \emph{A systematic comparison of Bayesian Optimization variants},
           which identifies the setup that performs best and shows which of its
           parameters actually matter.

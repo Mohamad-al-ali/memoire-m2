@@ -381,6 +381,43 @@ This result should nevertheless be interpreted with care. Only one
 specialist participated in this experiment and only three configurations
 were submitted. The comparison is therefore an illustration rather than
 a statistically meaningful evaluation of human expertise.
+
+\subsection{Valid versus reduced-cost executions}
+\label{sec:valid-invalid}
+
+\note{Moved from the methodology section.}
+
+\add{The exhaustive search relies on reduced-cost executions whose scores
+are marked as \texttt{INVALID} (Section~\ref{sec:exhaustive-search}). This
+raises the question of whether these short executions still give useful
+information about the quality of a configuration.}
+
+To study this question, several configurations were executed using both
+the reduced and the valid IO500 settings. Their scores and bandwidth
+results were then compared.
+
+Figure~\ref{fig:valid-invalid-comparison} shows this comparison.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]
+    {figures/comparaison_scores_bandwidth.png}
+    \caption{Comparison of IO500 scores obtained with valid and invalid
+    executions for selected configurations.}
+    \label{fig:valid-invalid-comparison}
+\end{figure}
+
+The comparison shows that the scores obtained with short executions are
+different from the valid IO500 scores. The difference is also not the
+same for every configuration. Therefore, a simple correction value
+cannot be used to convert an invalid score into a valid score.
+
+However, reproducing the exact valid score is not the objective of the
+reduced-cost tests. What matters for this study is whether they provide
+enough information to distinguish good configurations from poor ones.
+If a good configuration can still be identified with a short execution,
+the complete parameter space can be explored at a much lower cost.
+
 \subsection{Example of a proposed comparison between valid and invalid IO500
 scores}
 \label{sec:proposed-validation}
