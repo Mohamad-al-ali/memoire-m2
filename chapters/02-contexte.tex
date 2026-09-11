@@ -198,9 +198,7 @@ From the beginning, the main elements of the study were fixed: IO500 was
 used as the benchmark, PlaFRIM \texttt{bora} as the target platform, and
 IOPS as the framework for running the experiments. Bayesian Optimization
 (BO) was selected as the main search strategy, with random search and
-exhaustive search used for comparison.
-
-The first stage of the internship focused on the exhaustive search. The
+exhaustive search used for comparison. The first stage of the internship focused on the exhaustive search. The
 objective was to explore the parameter space and obtain measurements that
 could later be used to compare the different search strategies. Each
 configuration was also evaluated several times to account for the
@@ -217,19 +215,15 @@ of IOPS. A plugin for running IO500 experiments was added to IOPS,
 together with an example YAML configuration describing the benchmark and
 the parameters explored during the study. This made it possible to run
 the IO500 experiments directly through IOPS and provided a reproducible
-configuration for the experiments.
+configuration for the experiments. 
 
 The IOPS documentation was also updated to describe the new functionality
-and its usage.
-
-The search component of IOPS was also extended with an implementation of
+and its usage. The search component of IOPS was also extended with an implementation of
 the Tree-structured Parzen Estimator (TPE). At this stage, the method had
 been implemented but had not yet been evaluated on the IO500 experiments.
 Other optimisation methods, such as Iterated Racing (irace) and
 Covariance Matrix Adaptation Evolution Strategy (CMA-ES), were also
-considered as possible extensions.
-
-These additional tasks emerged as the project evolved and extended the
+considered as possible extensions. These additional tasks emerged as the project evolved and extended the
 initial scope of the internship.
 
 
