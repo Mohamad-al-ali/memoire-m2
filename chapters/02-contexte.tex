@@ -24,6 +24,34 @@ internship, and the way the work was organised.}
 %               location on the Talence campus}.
 %         \item Local ecosystem relevant to this work: HPC culture of the lab
 %     \end{itemize}
+
+\subsection{Environmental and societal considerations}
+\label{sec:sustainability}
+
+This internship also has a link with environmental and societal
+responsibility. HPC experiments use computing nodes, storage systems, and
+network resources, which require energy to operate. In this work, a main
+objective is to reduce the number of IO500 executions needed to find a
+good configuration. This can reduce both the occupation of shared
+computing resources and the energy used for benchmarking.
+
+The importance of this issue can be illustrated by the cost of exhaustive
+search. In our study, running the complete parameter space with valid
+IO500 settings was estimated to require about 161 days of execution time.
+Using guided search methods such as Bayesian Optimization aims to obtain
+a good configuration with far fewer evaluations.
+
+The exact environmental impact was not measured during the internship.
+In particular, no direct measurement of energy consumption or carbon
+emissions was performed. The impact can therefore only be quantified in
+terms of computing time and number of benchmark executions, and not in
+terms of energy or CO$_2$ emissions.
+
+From a societal point of view, the work also contributes to a more
+efficient use of shared research infrastructures. The developments made
+in IOPS, including the IO500 configuration support and documentation,
+also improve reproducibility and make the experimental methodology easier
+to reuse by other researchers.
 \subsection{Inria and the Inria Centre at the University of Bordeaux}
 
 Inria is the French national research institute for digital science and

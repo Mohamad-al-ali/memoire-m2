@@ -316,12 +316,16 @@ IOPS can also apply constraints before running a configuration. In this
 study, the block size had to be a multiple of the transfer size. Invalid
 combinations were skipped automatically:
 
-\begin{verbatim}
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
 constraints:
   - name: "block_transfer_alignment"
     rule: "block_size_mb % transfer_size_mb == 0"
     violation_policy: "skip"
-\end{verbatim}
+\end{minted}
 
 This is important because not every mathematical combination of the
 parameter values represents a valid IO500 configuration.
@@ -339,9 +343,13 @@ processes per node. The jobs are executed on the PlaFRIM
 
 Each configuration is executed three times, as defined by:
 
-\begin{verbatim}
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
 repetitions: 3
-\end{verbatim}
+\end{minted}
 
 The search strategy is also selected directly in the YAML file. This
 means that the same benchmark definition can be used with Exhaustive
@@ -354,12 +362,16 @@ After each execution, IOPS parses the IO500 output and extracts the main
 performance metrics. In this study, the parser collects the overall
 IO500 score, the bandwidth result, and the metadata result:
 
-\begin{verbatim}
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
 metrics:
   - name: SCORE
   - name: BW
   - name: MD
-\end{verbatim}
+\end{minted}
 
 IOPS also stores information about the configuration and the execution.
 At the end of the experiment, these values are written to a CSV file,
@@ -442,3 +454,268 @@ all search methods are compared using the same IO500 measurements.
 The reference dataset and the cache are therefore used for the offline
 comparison of the search methods described in the next section.
 
+
+\subsection{Search strategies}
+    \subsubsection{Random Search}
+\label{sec:random-search}
+
+Random Search was used as a simple search method in this study. Instead
+of testing every possible configuration, it selects a subset of the
+parameter space at random.
+
+In IOPS, Random Search is enabled directly in the YAML configuration by
+setting:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+search_method: "random"
+\end{minted}
+
+The amount of the parameter space to explore can also be defined in the
+Random Search configuration. For example:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+random_config:
+  percentage: 0.05
+\end{minted}
+
+In this example, Random Search selects 5\% of the available
+configurations. Other percentages can be used depending on the number of
+configurations that should be evaluated.
+
+The selected configurations come from the same parameter space defined
+for the study. The same constraints are applied, so configurations that
+do not satisfy the experimental rules are not considered.
+
+Random Search does not use the results of previous executions to choose
+new configurations. The configurations are selected randomly from the
+available search space.
+
+This makes Random Search simple to configure and allows only a part of
+the complete parameter space to be evaluated.
+
+
+\subsubsection{Bayesian Optimization}
+\label{sec:bayesian-search}
+
+Bayesian Optimization was the main guided search method studied during
+the internship. Unlike Random Search, it uses the results of previous
+evaluations to decide which configuration should be tested next.
+
+In IOPS, Bayesian Optimization is enabled by setting:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+search_method: "bayesian"
+\end{minted}
+
+The objective of the search is also defined in the configuration. In this
+study, the IO500 \texttt{SCORE} is the value to maximise:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+bayesian_config:
+  objective_metric: "SCORE"
+  objective: "maximize"
+\end{minted}
+
+Bayesian Optimization starts by evaluating a small number of initial
+configurations. These first results are used to build a model of the
+relation between the parameter values and the IO500 score. The model is
+then used to select the next configuration. After this configuration is
+evaluated, the new result is added to the previous observations and the
+model is updated. This process continues until the evaluation budget is
+reached.
+
+Bayesian Optimization is not a single fixed method. Several choices can
+be made for the model and for the strategy used to select the next
+configuration. In IOPS, these choices are controlled by the
+\texttt{bayesian\_config} section.
+
+\paragraph{Surrogate models.}
+
+The surrogate model estimates the IO500 score of configurations that have
+not yet been evaluated. Three surrogate models were considered in this
+study:
+
+\begin{itemize}
+    \item \texttt{GP}: Gaussian Process;
+    \item \texttt{RF}: Random Forest;
+    \item \texttt{ET}: Extra Trees.
+\end{itemize}
+
+All three models learn from the configurations already evaluated, but
+they represent the relation between parameters and performance in
+different ways. The choice of surrogate model can therefore change the
+configurations proposed during the search.
+
+The model is selected with the \texttt{base\_estimator} option. For
+example:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+base_estimator: "RF"
+\end{minted}
+
+selects a Random Forest as the surrogate model.
+
+\paragraph{Acquisition functions.}
+
+Once the surrogate model has been built, an acquisition function is used
+to choose the next configuration to evaluate. Three acquisition
+functions were considered:
+
+\begin{itemize}
+    \item \texttt{EI}: Expected Improvement;
+    \item \texttt{PI}: Probability of Improvement;
+    \item \texttt{LCB}: Lower Confidence Bound.
+\end{itemize}
+
+EI considers the expected improvement over the best result found so far.
+PI considers the probability that a configuration will improve the
+current best result. LCB uses the prediction of the model together with
+its uncertainty to decide where to search next.
+
+These functions provide different ways to balance two important
+behaviours. The first is exploitation, which means testing configurations
+that are expected to perform well. The second is exploration, which means
+testing less-known parts of the parameter space.
+
+The acquisition function is selected with, for example:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+acquisition_func: "EI"
+\end{minted}
+
+\paragraph{Exploration parameters.}
+
+The balance between exploration and exploitation can also be controlled
+by additional parameters.
+
+For EI and PI, the parameter \texttt{xi} controls the amount of
+exploration. Different values can therefore make the search more focused
+on the current best region or encourage it to explore other parts of the
+parameter space.
+
+For LCB, this role is controlled by \texttt{kappa}. A larger value gives
+more importance to uncertainty and therefore encourages more exploration.
+
+For example, a BO configuration can use:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+xi: 0.01
+kappa: 1.96
+\end{minted}
+
+Only the parameter related to the selected acquisition function has an
+effect on the search.
+
+\paragraph{Initial points and evaluation budget.}
+
+The parameter \texttt{n\_initial\_points} defines how many configurations
+are evaluated before the surrogate model starts guiding the search. These
+initial configurations provide the first observations needed to build the
+model.
+
+The parameter \texttt{n\_iterations} controls the number of evaluations
+performed by the optimisation. It therefore represents an important part
+of the search budget. A larger budget gives Bayesian Optimization more
+opportunities to learn about the parameter space, but it also requires
+more evaluations.
+
+For example:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+n_initial_points: 5
+n_iterations: 10
+\end{minted}
+
+starts the optimisation with five initial points and uses an evaluation
+budget defined by ten iterations.
+
+\paragraph{Example of a Bayesian configuration.}
+
+The following configuration is one example of a Bayesian Optimization
+setup used with IOPS:
+
+\begin{minted}[
+    fontsize=\small,
+    frame=lines,
+    breaklines=true
+]{yaml}
+search_method: "bayesian"
+
+bayesian_config:
+  objective_metric: "SCORE"
+  objective: "maximize"
+  n_initial_points: 5
+  n_iterations: 10
+  acquisition_func: "EI"
+  base_estimator: "RF"
+  xi: 0.01
+  kappa: 1.96
+  fallback_to_exhaustive: false
+\end{minted}
+
+This example corresponds to a Random Forest surrogate combined with the
+Expected Improvement acquisition function. It uses five initial points
+and \texttt{xi = 0.01}. This is only one possible BO configuration.
+
+In this study, several combinations of surrogate models, acquisition
+functions, exploration parameters, initial points, and evaluation budgets
+were tested. This is important because changing one of these options can
+change the behaviour of Bayesian Optimization. The goal was therefore not
+only to test whether Bayesian Optimization works for IO500, but also to
+determine which BO configuration is the most effective for this problem.
+
+\paragraph{Selection of the next configuration.}
+
+IOPS implements the Bayesian search as a sequential process. At each
+iteration, the optimiser suggests a new point based on the results
+already available. IOPS then maps this suggestion to a valid
+configuration from the parameter space. The result of this configuration
+is returned to the optimiser and used to update the model.
+
+The process can therefore be summarised as:
+
+\[
+\text{suggest}
+\rightarrow
+\text{select a valid configuration}
+\rightarrow
+\text{evaluate}
+\rightarrow
+\text{update the model}.
+\]
+
+Because each new suggestion depends on the previous results, Bayesian
+Optimization is sequential: the result of one evaluation is used before
+selecting the next configuration.
