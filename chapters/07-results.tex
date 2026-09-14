@@ -743,17 +743,45 @@ uses the previous observations to separate configurations according to
 their performance. It models the distribution of parameter values for
 good configurations and compares it with the distribution of
 lower-performing configurations.
-The general idea can be represented as:
+\replace{The general idea can be represented as:}{Figure~\ref{fig:tpe-workflow}
+summarises the general idea.}
 
-\[
-\text{previous evaluations}
-\rightarrow
-\text{separate good and lower-performing configurations}
-\rightarrow
-\text{model their parameter distributions}
-\rightarrow
-\text{select a promising configuration}.
-\]
+\note{The workflow, previously written as a one-line equation that ran past
+the page margin, is now shown as a figure.}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\small,
+        stage/.style={
+            draw=wfstroke, fill=wffill, line width=0.7pt,
+            rounded corners=3pt, align=center,
+            text width=27mm, minimum height=14mm, inner sep=1.8mm
+        },
+        flow/.style={
+            -{Stealth[length=2.4mm, width=1.9mm]},
+            line width=0.7pt, draw=wfstroke
+        },
+        loop/.style={flow, dash pattern=on 2.2pt off 1.8pt},
+        lbl/.style={font=\scriptsize\itshape, text=wfstroke, inner sep=2pt}
+    ]
+    \node[stage] (obs)    at (0,    0) {Previous\\evaluations};
+    \node[stage] (split)  at (3.75, 0) {Separate good and\\lower-performing\\configurations};
+    \node[stage] (model)  at (7.5,  0) {Model their\\parameter\\distributions};
+    \node[stage] (select) at (11.25,0) {Select a\\promising\\configuration};
+    \draw[flow] (obs)   -- (split);
+    \draw[flow] (split) -- (model);
+    \draw[flow] (model) -- (select);
+    \draw[loop] (select.south) -- ++(0,-0.75) -| node[lbl, pos=0.25, below]
+        {evaluate and add to the observations} (obs.south);
+    \end{tikzpicture}
+    \caption{Workflow of the Tree-structured Parzen Estimator. The previous
+    evaluations are divided into good and lower-performing configurations,
+    the distribution of the parameter values is modelled for each group,
+    and the next configuration is selected where good configurations are
+    more likely. Its result is then added to the observations.}
+    \label{fig:tpe-workflow}
+\end{figure}
 Figure~\ref{fig:bo-vs-tpe} illustrates the main difference between
 Bayesian Optimization and TPE.
 
