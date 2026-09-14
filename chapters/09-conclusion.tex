@@ -1,28 +1,7 @@
 \section{Conclusion and perspectives}
 \label{sec:conclusion}
 
-% =============================================================================
-% GOAL (1-2 pages). No new information. Restate the problem, the method, the
-% three or four numbers you want the reader to remember, then the open work.
-% =============================================================================
 
-\subsection{Summary}
-
-% \begin{itemize}
-%     \item Problem: tuning IO500 properly is intractable because the validity
-%           rules make a single measurement cost $\approx$ \SI{30}{\minute}.
-%     \item Method: measure the whole grid once with deliberately \emph{invalid}
-%           but rank-preserving short runs, cache it, and replay every search
-%           strategy offline at zero cluster cost.
-%     \item Result: the exhaustive campaign cost $\approx \SI{183}{\hour}$
-%           instead of more than a year, and a well-chosen Bayesian Optimization
-%           setup reaches $\geq$ 98\,\% of the optimum in a few dozen
-%           evaluations, one order of magnitude cheaper than exhaustive search
-%           and above what random search or a human expert reached.
-%     \item Contribution to the tooling: the methodology, the configurations and
-%           the analysis scripts are packaged with IOPS and are reusable on
-%           another machine.
-% \end{itemize}
 
 The objective of this internship was to study how IO500 can be tuned
 without exploring the complete parameter space with valid benchmark
@@ -65,17 +44,7 @@ a small number of proposed configurations.
 
 The internship also contributed to the development of IOPS. IO500 support
 was added through a configuration generator, allowing users to create an
-IO500 YAML template with the command:
-
-\begin{minted}[
-    fontsize=\small,
-    frame=lines,
-    breaklines=true
-]{bash}
-iops generate --io500
-\end{minted}
-
-The IOPS documentation was updated to describe this functionality and the
+IO500 YAML template with one \add{simple} command. The IOPS documentation was updated to describe this functionality and the
 main parameters that can be adapted to the target system. The search
 component was also extended with an implementation of the
 Tree-structured Parzen Estimator (TPE). TPE was implemented during the
@@ -85,45 +54,20 @@ Overall, this work shows that guided search is a promising approach for
 IO500 tuning. Instead of testing a large number of configurations without
 guidance, Bayesian Optimization can use previous observations to focus
 the search on more promising parts of the parameter space.
-\subsection{Perspectives}
-
-% \begin{itemize}
-%     \item Complete the \textbf{valid cluster validation} of the best
-%           configurations and report official-grade IO500 scores.
-%     \item Reproduce the study on \textbf{IRENE} (TGCC), a larger and more
-%           complex system, to test generalisation.
-%     \item Extend the \textbf{10-node challenge} study.
-%     \item Collect submissions from \textbf{more specialists} to make the human
-%           baseline statistically meaningful.
-%     \item Implement and compare \textbf{additional search techniques} against
-%           the existing cache: genetic algorithms, simulated annealing,
-%           greedy/coordinate search (to reproduce the CLAIX23 baseline
-%           directly on our data).
-%     \item Feed the diagnostic findings back into the IOPS
-%           \texttt{BayesianPlanner} (surrogate defaults, handling of discrete
-%           dimensions, duplicate-proposal policy).
-%     \item Longer term: transfer learning across machines -- reuse the response
-%           surface measured on one system to warm-start the search on another.
-% \end{itemize}
 
 
-Several directions can extend the work presented in this report.
 
-The first step is to complete the validation of the best configurations
+Several directions can extend the work presented in this report. The first step is to complete the validation of the best configurations
 using valid IO500 executions. This would make it possible to confirm the
 results obtained with the reduced-cost setup and to report official-grade
-IO500 scores.
-
-A second direction is to reproduce the study on IRENE at TGCC. IRENE is a
+IO500 scores. A second direction is to reproduce the study on IRENE at TGCC. IRENE is a
 larger and more complex HPC system, so repeating the experiments there
 would help determine whether the conclusions obtained on PlaFRIM can also
 be observed on another platform.
 
 The 10-node challenge could also be extended. This would provide an
 additional experimental setting for studying how the search methods behave
-when the available computing resources are limited.
-
-The comparison with human expertise could also be improved. In the current
+when the available computing resources are limited. The comparison with human expertise could also be improved. In the current
 study, only a small number of configurations were provided by one
 specialist. Collecting configurations from more specialists would provide
 a stronger human baseline and make the comparison more meaningful.

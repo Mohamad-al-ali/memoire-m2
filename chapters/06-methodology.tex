@@ -622,15 +622,6 @@ measurements for the same configuration and helps reduce the effect of
 temporary performance variations. It also gives a more reliable view of
 the performance of each configuration.}
 
-The resulting dataset is used as the ground truth in this study. Here,
-ground truth does not mean that the results are official valid IO500
-results. \replace{As explained in the previous section}{As explained above}, the exhaustive search was
-performed with shorter IO500 executions, which are marked as
-\texttt{INVALID}. The ground truth is therefore a reference for the
-reduced-cost setup used in this work.
-The main advantage of this dataset is that the results of all tested
-configurations are already known. It is therefore possible to identify
-the best configuration in the reference dataset.
 
 
 \subsection{Evaluation of the search strategies}
@@ -718,8 +709,7 @@ configurations that should be evaluated.
 
 \add{In this example, Random Search evaluates 40 configurations. In this
 study, it was run with budgets of 10, 15, 20, 30, 40, 60, 80, and 120
-configurations, which covers the budgets used for Bayesian Optimization and
-extends beyond them.}
+configurations, which covers the same range as the budgets used for Bayesian Optimization.}
 The selected configurations come from the same parameter space defined
 for the study. The same constraints are applied, so configurations that
 do not satisfy the experimental rules are not considered.
@@ -874,9 +864,9 @@ determine which BO configuration is the most effective for this problem.
 \add{The configurations were organised in two groups. The main grid combines
 the three surrogate models with five acquisition settings, namely EI with
 \texttt{xi}~=~0.01 and 0.1, PI with \texttt{xi}~=~0.01, and LCB with
-\texttt{kappa}~=~1.96 and 5.0, and with five budgets of 10, 15, 20, 30, and
-40 evaluations, always starting from five initial points. This gives
-$3 \times 5 \times 5 = 75$ setups. A sensitivity analysis then varies one
+\texttt{kappa}~=~1.96 and 5.0, and with nine budgets of 10, 15, 20, 30, 40, 60, 80, 100, and 120
+evaluations, always starting from five initial points. This gives
+$3 \times 5 \times 9 = 135$ setups. A sensitivity analysis then varies one
 option at a time around a default setup (Random Forest, EI,
 \texttt{xi}~=~0.01, five initial points) at budgets of 20 and 40
 evaluations: the surrogate model, the acquisition function, \texttt{xi} in
@@ -884,8 +874,7 @@ $\{0.001, 0.01, 0.1\}$, \texttt{kappa} in $\{0.5, 1.96, 5.0\}$, and the
 number of initial points in $\{3, 5, 10\}$. Most of these settings are
 already part of the main grid; only \texttt{xi}~=~0.001,
 \texttt{kappa}~=~0.5, and three or ten initial points are new, which adds 8
-setups. In total, 83 BO setups were evaluated, each with the ten seeds, for
-830 searches. Table~\ref{tab:bo-values} summarises the values taken by each
+setups. In total, 143 BO setups were evaluated, each with the ten seeds, for 1\,430 searches. Table~\ref{tab:bo-values} summarises the values taken by each
 option.}
 
 \begin{table}[H]
@@ -905,7 +894,7 @@ exploration parameter of the selected acquisition function is active:
     \texttt{xi} & Exploration (EI, PI) & 0.001, 0.01, 0.1 \\
     \texttt{kappa} & Exploration (LCB) & 0.5, 1.96, 5.0 \\
     \texttt{n\_initial\_points} & Initial configurations & 3, 5, 10 \\
-    \texttt{n\_iterations} & Evaluation budget & 10, 15, 20, 30, 40 \\
+    \texttt{n\_iterations} & Evaluation budget & 10 to 120 (nine values) \\
     \texttt{random\_seed} & Seed of each run & 0 to 9 \\
     \hline
 \end{tabular}

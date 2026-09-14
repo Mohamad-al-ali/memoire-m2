@@ -1,9 +1,7 @@
 % =============================================================================
 % Bibliography starter.
 %
-% Entries marked TO-COMPLETE have a verified URL but their full metadata
-% (exact title, author list, pages) still has to be filled in from the
-% publisher's page. Do NOT cite an entry you have not opened and read.
+% Every entry has been checked against its publisher or project page.
 %
 % Suggested additions, to be found and added by the student:
 %   - 3-5 papers on I/O auto-tuning (MPI-IO hints, Lustre striping selection)
@@ -19,7 +17,7 @@
     title        = {{IO500} Submission Rules},
     author       = {{IO500 Foundation}},
     howpublished = {\url{https://io500.org/rules/submission}},
-    note         = {Accessed: \today},
+    note         = {Accessed: 2026-09-14},
     year         = {2026},
 }
 
@@ -27,7 +25,7 @@
     title        = {The {TOP500} List},
     author       = {{TOP500.org}},
     howpublished = {\url{https://www.top500.org/}},
-    note         = {Accessed: \today},
+    note         = {Accessed: 2026-09-14},
     year         = {2026},
 }
 
@@ -35,16 +33,17 @@
     title        = {The {IO500} List},
     author       = {{IO500 Foundation}},
     howpublished = {\url{https://io500.org/}},
-    note         = {Accessed: \today},
+    note         = {Accessed: 2026-09-14},
     year         = {2026},
 }
 
-% TO-COMPLETE: the IO500 benchmark reference paper (Kunkel et al.).
-% Find the exact reference and replace this entry.
 @misc{io500paper,
-    title        = {TO-COMPLETE: {IO500} benchmark reference paper},
-    author       = {TO-COMPLETE},
-    year         = {2026},
+    title        = {Establishing the {IO-500} Benchmark},
+    author       = {Kunkel, Julian and Bent, John and Lofstead, Jay and
+                    Markomanolis, George S.},
+    howpublished = {White paper,
+                    \url{https://www.vi4io.org/_media/io500/about/io500-establishing.pdf}},
+    year         = {2016},
 }
 
 % --------------------------- Parallel file systems ---------------------------
@@ -53,8 +52,8 @@
     title     = {Lustre: Building a File System for 1000-node Clusters},
     author    = {Schwan, Philip},
     booktitle = {Proceedings of the 2003 Linux Symposium},
+    pages     = {380--386},
     year      = {2003},
-    note      = {VERIFY: page numbers},
 }
 
 @inproceedings{gpfs,
@@ -64,7 +63,6 @@
                  Technologies (FAST)},
     pages     = {231--244},
     year      = {2002},
-    note      = {VERIFY: page numbers},
 }
 
 % BeeGFS has no canonical peer-reviewed paper, so the project itself is the
@@ -74,7 +72,7 @@
     title        = {{BeeGFS}: The Parallel Cluster File System},
     author       = {{ThinkParQ GmbH}},
     howpublished = {\url{https://www.beegfs.io/}},
-    note         = {Accessed: \today},
+    note         = {Accessed: 2026-09-14},
     year         = {2026},
 }
 
@@ -86,8 +84,9 @@
     author    = {Hoefler, Torsten and Belli, Roberto},
     booktitle = {Proceedings of the International Conference for High
                  Performance Computing, Networking, Storage and Analysis (SC)},
+    pages     = {73:1--73:12},
     year      = {2015},
-    note      = {VERIFY: article number / pages},
+    doi       = {10.1145/2807591.2807644},
 }
 
 % The IOR suite also ships mdtest; both are cited from the same repository.
@@ -97,7 +96,7 @@
     title        = {{IOR} and mdtest: Parallel Filesystem {I/O} Benchmarks},
     author       = {{The IOR contributors}},
     howpublished = {\url{https://github.com/hpc/ior}},
-    note         = {Accessed: \today},
+    note         = {Accessed: 2026-09-14},
     year         = {2026},
 }
 
@@ -105,7 +104,7 @@
     title        = {mdtest: Metadata Benchmark for Parallel File Systems},
     author       = {{The IOR contributors}},
     howpublished = {\url{https://github.com/hpc/ior}},
-    note         = {Distributed with the IOR suite. Accessed: \today},
+    note         = {Distributed with the IOR suite. Accessed: 2026-09-14},
     year         = {2026},
 }
 
@@ -117,8 +116,8 @@
                    Thornquist, Heidi K. and Numrich, Robert W.},
     institution = {Sandia National Laboratories},
     number      = {SAND2009-5574},
+    month       = sep,
     year        = {2009},
-    note        = {VERIFY: author list and report number},
 }
 
 % --------------------------- Tools and framework ----------------------------
@@ -126,85 +125,77 @@
 @misc{iops,
     title        = {{IOPS}: Integrated Orchestration for Parametric Studies},
     author       = {{TADaaM, Inria}},
-    howpublished = {\url{https://iops-benchmark.com}},
-    note         = {Source repository:
-                    \url{https://gitlab.inria.fr/hpc_io/iops}. Accessed: \today},
+    howpublished = {\url{https://gitlab.inria.fr/hpc_io/iops}},
+    note         = {Project website: \url{https://iops-benchmark.com}. Accessed: 2026-09-14},
     year         = {2026},
 }
 
-% TO-COMPLETE: the team's 2022 I/O performance study paper.
-% Full metadata is on the HAL page below.
-@misc{iops2022,
-    title        = {TO-COMPLETE: 2022 {I/O} performance study},
-    author       = {TO-COMPLETE},
-    howpublished = {\url{https://inria.hal.science/hal-03753813/}},
-    year         = {2022},
+@inproceedings{abdraman2025iops,
+    title     = {{IOPS}: {I/O} Performance Evaluation Suite},
+    author    = {Abdraman, Mahamat and Boito, Francieli and Teylo, Luan},
+    booktitle = {2025 IEEE International Parallel and Distributed Processing
+                 Symposium Workshops (IPDPSW)},
+    pages     = {731--736},
+    year      = {2025},
+    doi       = {10.1109/IPDPSW66978.2025.00114},
 }
 
 @misc{skopt,
     title        = {scikit-optimize: Sequential model-based optimization in {Python}},
     author       = {{The scikit-optimize contributors}},
     howpublished = {\url{https://scikit-optimize.github.io/}},
-    note         = {Version TO-COMPLETE},
+    note         = {Version 0.10. Accessed: 2026-09-14},
     year         = {2026},
 }
 
 % ------------------------------ Related work --------------------------------
 
-% TO-COMPLETE: IO500 tuning on the CLAIX23 cluster,
-% IEEE Cluster Workshops 2025. This is the closest related work: get the
-% exact title, authors, pages and DOI.
-@inproceedings{claix23,
-    title     = {TO-COMPLETE: {IO500} tuning on {CLAIX23}},
-    author    = {TO-COMPLETE},
-    booktitle = {IEEE International Conference on Cluster Computing Workshops
-                 (CLUSTER Workshops)},
-    year      = {2025},
-}
-
 @misc{inria_bordeaux,
   author       = {{Inria}},
-  title        = {Inria Centre at the University of Bordeaux},
+  title        = {{Inria} Centre at the {University of Bordeaux}},
   howpublished = {\url{https://www.inria.fr/en/inria-centre-university-bordeaux}},
-  note         = {Accessed: 2026-08-24}
+  note         = {Accessed: 2026-08-24},
+  year         = {2026}
 }
 
 @misc{inria_hpc_teams,
   author       = {{Inria}},
-  title        = {The project-teams -- Distributed and High Performance Computing},
+  title        = {The Project-Teams -- Distributed and High Performance Computing},
   howpublished = {\url{https://www.inria.fr/en/list-of-project-teams}},
-  note         = {Accessed: 2026-08-24}
+  note         = {Accessed: 2026-08-24},
+  year         = {2026}
 }
 
 @misc{inria_tadaam,
   author       = {{Inria}},
-  title        = {TADaaM -- Topology-aware system-scale data management for high-performance computing},
+  title        = {{TADaaM} -- Topology-Aware System-Scale Data Management for High-Performance Computing},
   howpublished = {\url{https://www.inria.fr/en/tadaam}},
-  note         = {Accessed: 2026-08-24}
+  note         = {Accessed: 2026-08-24},
+  year         = {2026}
 }
 
 @misc{plafrim,
   author       = {{Inria}},
-  title        = {PLaFRIM -- Cluster of inria of Bordeaux},
+  title        = {{PlaFRIM} -- Cluster of {Inria} of {Bordeaux}},
   howpublished = {\url{https://plafrim-users.gitlabpages.inria.fr/doc/}},
-  note         = {Accessed: 2026-08-24}
+  note         = {Accessed: 2026-08-24},
+  year         = {2026}
 }
-
 
 @misc{io500about,
   author       = {{IO500 Foundation}},
-  title        = {IO500 -- About},
+  title        = {{IO500} -- About},
   howpublished = {\url{https://io500.org/about}},
-  note         = {Accessed: 2026-08-27}
+  note         = {Accessed: 2026-08-27},
+  year         = {2026}
 }
-
-
 
 @misc{io500running,
   author       = {{IO500 Foundation}},
-  title        = {IO500 -- Running},
+  title        = {{IO500} -- Running},
   howpublished = {\url{https://io500.org/running}},
-  note         = {Accessed: 2026-08-27}
+  note         = {Accessed: 2026-08-27},
+  year         = {2026}
 }
 @inproceedings{teylo2022beegfs,
     title     = {The Role of Storage Target Allocation in Applications' {I/O}
@@ -213,7 +204,9 @@
     booktitle = {2022 IEEE International Conference on Cluster Computing
                  (CLUSTER)},
     address   = {Heidelberg, Germany},
+    pages     = {267--277},
     year      = {2022},
+    doi       = {10.1109/CLUSTER51413.2022.00039},
     url       = {https://hal.science/hal-03753813},
 }
 

@@ -11,7 +11,8 @@
 % !TeX root = ../main.tex
 
 \add{This section presents the results obtained during the study. We first
-give an overview of the complete set of measured configurations and analyse
+give an overview of the complete set of measured configurations and of the
+variability between repeated executions, and then analyse
 the distribution of the IO500 SCORE over the search space. We then study
 the structure of the response surface and the influence of the different
 parameters. The next part compares the search strategies and analyses how
@@ -19,11 +20,16 @@ quickly Random Search and Bayesian Optimization find good configurations.
 Finally, we compare the different Bayesian Optimization setups and identify
 the configuration that gives the best results.}
 
+\subsection{The reference dataset and its variability}
+\label{sec:dataset-variability}
+
 Figure~\ref{fig:all-results} gives a first overview of all IO500 executions
 collected during the exhaustive study. Each point represents one execution
 stored in the reference dataset. The SCORE varies strongly across the
 different executions, while only a small number of results are close to the
-best value found in the dataset.
+best value found in the dataset. \add{The dataset contains 15\,502
+executions of 5\,168 configurations, with SCOREs ranging from about 2 to
+15.28.}
 
 \begin{figure}[H]
     \centering
@@ -31,13 +37,69 @@ best value found in the dataset.
     {figures/methodology_scatter.png}
     \caption{IO500 SCORE obtained for all executions in the reference
     dataset. The dashed red line shows the best SCORE found, equal to
-    approximately 15.28.}
+    approximately 15.28. \add{Executions are shown in the order in which
+    they were stored in the cache.}}
     \label{fig:all-results}
 \end{figure}
 
 This first view shows that the parameter space contains configurations with
-very different performance levels. The following subsections analyse these
-results in more detail.
+very different performance levels. \add{The horizontal bands correspond
+mainly to the number of compute nodes: the median SCORE is 5.4 with one
+node and 12.7 with sixteen nodes. The number of storage targets also has a
+clear effect, with a median SCORE of 8.1 with one target and 11.1 with
+eight. Since the horizontal axis follows the order of the cache, it also
+reflects the successive stages of the campaign, which covered different
+parts of the grid. The first 2\,000 executions, for example, contain no
+single-node run, which explains why the beginning of the figure looks
+different from the rest.}
+
+\add{Each configuration was executed three times, which makes it possible
+to measure the variability of IO500 on the platform.
+Figure~\ref{fig:variability} shows the three repetitions of 60
+configurations sampled evenly across the measured range. The spread
+between repetitions is usually small compared with the differences between
+configurations. The median coefficient of variation is 4.6\%, which
+corresponds to a median difference of 0.79 SCORE points between the best
+and the worst repetition. Large variations remain rare: 11.6\% of the
+configurations vary by more than 10\%, and 2.5\% by more than 20\%. The
+variability is also similar across the score range, with a median
+coefficient of variation between 3.8\% and 5.1\% for low, medium, and high
+scores. It therefore behaves as a noise proportional to the score, rather
+than as a problem of a few specific configurations.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/variability_repetitions.png}
+    \caption{Variability of the IO500 SCORE between repetitions. Each
+    vertical segment shows the three executions of one configuration; 60
+    configurations are sampled evenly across the measured range and
+    ordered from the worst to the best.}
+    \label{fig:variability}
+\end{figure}
+
+\add{The variation between configurations is about four times larger than
+the variation between repetitions of the same configuration. A single
+execution therefore already ranks the configurations consistently: the
+Spearman correlation between two repetitions is 0.93, and the intraclass
+correlation coefficient is 0.94 for a single execution and 0.98 for the
+mean of the three repetitions.}
+
+\add{This consistency does not hold among the best configurations. Their
+scores lie within a few percent of each other, which is the same order of
+magnitude as the noise, so the ten best configurations of one repetition
+are almost never the ten best of another. The dataset therefore supports
+conclusions about how good a SCORE a search strategy reaches, but not
+about which exact configuration is optimal.}
+
+\add{The reference optimum also depends on how the repetitions are
+aggregated. The dataset keeps the best of the three repetitions of each
+configuration, so the optimum of 15.28 is the best single execution; the
+best mean over three repetitions is 14.63, about 4\% lower. The search
+strategies are scored in the same way, with the best execution they read,
+so the percentages of the optimum reported in the following sections are
+consistent with this reference.}
+
+The following subsections analyse these results in more detail.
 
 \subsection{Characterisation of the response surface}
 
@@ -56,29 +118,36 @@ results in more detail.
 
 Before comparing the different search methods, we first analyse the
 structure of the IO500 search space. The objective is to understand how
-the SCORE is distributed and whether good configurations are common or
-rare.
+the SCORE is distributed and whether good configurations are common or rare.
 
-\paragraph{Distribution of the SCORE.}
+\note{Paragraph headings removed. Both figures of this subsection were
+regenerated from the full dataset (5\,168 configurations); the previous versions and the numbers of the text came from an earlier
+stage of the campaign with about 540 configurations. Figure~\ref{fig:score-distribution}
+now shows only the distribution; the random-search probabilities moved to
+Section~\ref{sec:random-not-enough}.}
+
+
 
 Figure~\ref{fig:score-distribution} shows the distribution of the best
 SCORE obtained for each configuration. The scores are spread over a wide
-range, from values below 7 to a maximum of about 15.28.
+range, from \replace{values below 7}{about 4} to a maximum of about 15.28.
 
-The median SCORE is 10.58, and approximately 81\% of the configurations
-have a SCORE below 13. This shows that high-performing configurations
+The median SCORE is \replace{10.58}{10.53}, and \replace{approximately 81}{about 85}\% of the configurations have a SCORE below 13. This shows that high-performing configurations
 represent only a small part of the search space. In particular, the
 configurations close to the optimum are much less frequent than
-configurations with medium or low scores.
+configurations with medium or low scores. \add{Only 173 configurations
+(3.4\%) reach a SCORE of 14, 37 reach 14.5, and 11 reach 15. The
+histogram also has three modes, around 5.5, 8, and between 11 and 13,
+which correspond to the bands of Figure~\ref{fig:all-results}: runs on one
+node, on two nodes, and on four nodes or more.}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]
     {figures/fig_score_distribution.png}
     \caption{Distribution of the IO500 SCORE over the measured
-    configurations. The left plot shows the SCORE distribution, while
-    the right plot shows the probability of reaching different SCORE
-    thresholds with random sampling.}
+    configurations. Each configuration is represented by the best of its
+    three repetitions; the dashed lines show the median and the optimum.}
     \label{fig:score-distribution}
 \end{figure}
 
@@ -87,14 +156,21 @@ configurations. As a result, finding a configuration with a reasonable
 SCORE is relatively easy, but finding a configuration very close to the
 best SCORE is much more difficult.
 
+\begin{cut}
 The probability curves shown on the right side of
 Figure~\ref{fig:score-distribution} illustrate this effect. With a small
 number of random evaluations, it is possible to reach medium SCORE
 values, while the probability decreases strongly when the target SCORE
-approaches the optimum. This result will be discussed in more detail when
-analysing Random Search.
+approaches the optimum. \add{With 40 random evaluations, for example,
+the probability of finding a SCORE of at least 13 is 99.9\%, but it drops
+to 25\% for 14.5 and to 8\% for 15.} This result will be discussed in more
+detail when analysing Random Search.
+\end{cut}
 
-\paragraph{Two-dimensional projections.}
+\add{This has a direct consequence for Random Search, which is analysed in
+Section~\ref{sec:random-not-enough}.}
+
+
 
 The distribution alone does not show how the different parameters affect
 the SCORE. To study these effects, Figure~\ref{fig:response-surface}
@@ -102,41 +178,57 @@ shows several two-dimensional projections of the response surface.
 
 Each cell represents the mean SCORE obtained for a pair of parameter
 values. The other parameters are averaged over the available
-configurations. The red star indicates the parameter values of the global
-best configuration.
+configurations. The red star indicates the parameter values of the global best configuration.
+\add{This configuration uses 16 nodes with 36 processes per node, a
+transfer size of 1~MiB, eight storage targets, and a shared file and
+directory. White cells correspond to combinations that are excluded by the
+constraints or were not measured.}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]
+    \includegraphics[width=0.9\textwidth]
     {figures/fig_response_surface_2d.png}
     \caption{Two-dimensional projections of the IO500 response surface.
     Each cell shows the mean SCORE for a pair of parameter values. The
-    red star indicates the global optimum.}
+    red star indicates the global optimum. \add{White cells are combinations
+    excluded by the constraints or not measured.}}
     \label{fig:response-surface}
 \end{figure}
 
 Several trends can be observed. Increasing the number of nodes generally
-improves the SCORE, but the effect of the number of processes per node
-depends on the number of nodes. This means that the two parameters
-interact and should not be considered independently.
+improves the SCORE\add{, from about 5 to 6 with one node to about 13.5
+with sixteen nodes}, but the effect of the number of processes per node
+depends on the number of nodes. \add{With ten nodes, the best mean SCORE is obtained with 24 processes
+per node (12.8), whereas with sixteen nodes it is obtained with 16 (13.5).}
+This means that the two parameters interact and should not be considered
+independently.
 
-A similar behaviour can be observed for the transfer size. Its effect
+\del{A similar behaviour can be observed for the transfer size. Its effect
 depends on the total number of tasks and on the number of storage targets.
 For example, increasing the number of storage targets has only a small
 effect for some transfer sizes, while the improvement is much larger for
-others.
+others.}
+\add{The transfer size has a smaller effect. Small transfers perform
+slightly better, and transfers of 64~MiB give the lowest scores for every
+number of storage targets. Increasing the number of storage targets from
+one to eight improves the mean SCORE by between 1.4 and 2.3 points, for
+all transfer sizes.}
 
 The projection between the number of nodes and the number of storage
 targets also shows that higher values of both parameters generally lead
 to better scores. The best configuration is located in a small region
-with a high number of nodes and storage targets.
+with a high number of nodes and storage targets. \add{This projection
+also shows the clearest interaction of the study. With one node, the
+number of storage targets has no visible effect, with a mean SCORE between
+5.4 and 5.7. With sixteen nodes, the mean SCORE rises from 12.1 with two
+targets to 14.2 with eight. Additional storage targets therefore only help
+when enough compute nodes generate I/O load.}
 
-Overall, the response surface does not behave like a simple convex or
-separable function. The effect of one parameter can change depending on
+Overall, the response surface does not behave like a \replace{simple convex or separable}{separable} function. The effect of one parameter can change depending on
 the values of the other parameters. This confirms that parameter
 interactions are important in IO500 tuning.
 
-\paragraph{Main observation.}
+
 
 The two analyses lead to the same conclusion. First, configurations close
 to the optimum are rare. Second, the parameters interact with each other,
@@ -162,104 +254,187 @@ the use of search methods that explore several parameters together.
 %           $n_{\text{initial}}$) and justify it.
 % \end{itemize}
 To determine which combination works best for IO500, the different
-Bayesian Optimization setups were compared using their mean best SCORE
-over the considered budgets. Figure~\ref{fig:best-bo-ranking} shows the
-ranking of the best-performing setups.
-\begin{figure}[H]
+Bayesian Optimization setups were compared using their mean best SCORE \replace{over the considered
+budgets}{over the nine budgets, from 10 to 120 evaluations, and the ten
+seeds}. Figure~\ref{fig:best-bo-ranking} shows the ranking of the
+best-performing setups. \add{The ranking includes the fifteen setups of the
+main grid, which were run at every budget, and Random Search as a
+baseline.}
+
+\note{Subsection restructured: the ranking of all setups and the four best
+ones, then the effect of the budget compared with Random Search. The
+detailed discussion of the acquisition functions, the exploration
+parameters, the initial points, and the practical recommendation was
+removed from the text; it is kept as a comment in the source file.}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]
     {figures/best_setup_ranking.png}
     \caption{Ranking of the best Bayesian Optimization setups according
     to their mean best IO500 SCORE. The dashed red line represents the
-    global optimum of the reference dataset.}
+    global optimum of the reference dataset. \add{Each score is averaged over
+    the ten seeds and the nine budgets from 10 to 120 evaluations.}}
     \label{fig:best-bo-ranking}
 \end{figure}
 
-\paragraph{Influence of the surrogate model.}
 
-The clearest result is the influence of the surrogate model. The
-best-performing setups in Figure~\ref{fig:best-bo-ranking} all use a
-Gaussian Process (GP).
+The clearest result is the influence of the surrogate model. \replace{The best-performing setups}{The five best setups} in Figure~\ref{fig:best-bo-ranking} all use a Gaussian Process (GP).
 
-The best setup is \texttt{GP\_LCB\_k1.96\_i5}, with a mean best SCORE of
-14.854. It is followed closely by \texttt{GP\_LCB\_k5.0\_i5}, with a
+The best setup is \texttt{GP\_LCB\_k1.96\_i5}, with a mean best SCORE of 14.854\add{, or 97.2\% of the optimum}. It is followed closely by \texttt{GP\_LCB\_k5.0\_i5}, with a
 SCORE of 14.847. Other high-ranking setups also use a Gaussian Process
 combined with EI or PI.
+\add{The four best setups are within 0.07 of each other, between 14.787 and
+14.854, that is between 96.8\% and 97.2\% of the optimum. This difference is
+much smaller than the variation between seeds, so these four setups can be
+considered equivalent. They share the same surrogate model and differ only
+in the acquisition function and its exploration parameter: the first two
+use LCB with \texttt{kappa}~=~1.96 and 5.0, and the next two use EI with
+\texttt{xi}~=~0.1 and 0.01. As long as a Gaussian Process is used, neither
+the choice between LCB and EI nor the value of the exploration parameter
+changes the result much. The fifth setup, which combines a Gaussian Process
+with PI, is slightly behind with 14.685.}
 
-The best setups based on Extra Trees and Random Forest obtain lower
-scores. This suggests that the surrogate model has a strong effect on the
-quality of the search. Among the models considered in this study,
-Gaussian Process gives the best results.
+The best setups based on Extra Trees and Random Forest obtain lower scores.
+\add{The best Extra Trees setup reaches 14.650 and the best Random Forest
+setup 14.554, and on average the five Gaussian Process setups score 14.795,
+against 14.49 for Extra Trees and 14.45 for Random Forest.} This suggests that the surrogate model has a strong effect on the
+quality of the search. Among the models considered in this study, Gaussian Process gives the best
+results. \add{Every setup of Figure~\ref{fig:best-bo-ranking} nevertheless
+performs better than Random Search, which reaches 14.239, or 93.2\% of the
+optimum.}
 
-\paragraph{Influence of the acquisition function.}
 
-The acquisition function also affects the results, but the difference
-between the best acquisition functions is smaller.
+\add{Figure~\ref{fig:top2-budget} shows how the evaluation budget affects the
+two best setups, compared with Random Search. Both Bayesian Optimization
+setups stay above Random Search at every budget, and the gap grows with the
+budget. With 30 evaluations, they already reach 14.84 and 14.96, more than
+Random Search obtains with 120 evaluations (14.66). From 60 evaluations
+onwards, both setups stabilise between 15.1 and 15.2, that is 99\% of the
+optimum, while Random Search keeps improving slowly.}
 
-LCB gives the two highest scores. However, EI is very close. For example,
-the best LCB setup reaches 14.854, while the best EI setup reaches
-14.803.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/fig_top2_vs_random_budget.png}
+    \caption{Best SCORE of the two best Bayesian Optimization setups and of
+    Random Search as a function of the evaluation budget. Lines show the
+    mean over the ten seeds and shaded areas one standard deviation. Random
+    Search was not run with 100 evaluations.}
+    \label{fig:top2-budget}
+\end{figure}
 
-This shows that both LCB and EI work well when combined with a Gaussian
-Process. PI also gives good results, but it remains slightly below the
-best LCB and EI setups.
+\add{The two setups also exchange positions depending on the budget:
+\texttt{kappa}~=~1.96 is ahead with 10 and 15 evaluations,
+\texttt{kappa}~=~5.0 with 20 and 30 evaluations and from 60 evaluations
+onwards, and the two are within 0.03 at 40. A larger \texttt{kappa} explores
+more at the beginning of the search, which costs evaluations when the budget
+is small but pays off when more evaluations are available. Their tie in
+Figure~\ref{fig:best-bo-ranking} therefore hides a dependence on the budget.
+Finally, the variation between seeds decreases as the budget grows, from
+about 0.6 to 0.7 with 10 evaluations to about 0.2 from 60 evaluations
+onwards, so a larger budget also makes the result of a single search more
+predictable.}
 
-The results therefore suggest that choosing the surrogate model is more
-important than choosing between LCB and EI.
 
-\paragraph{Influence of the exploration parameter.}
-
-The exploration parameter controls the balance between testing regions
-that already look promising and exploring less-known parts of the
-parameter space.
-
-For LCB, this behaviour is controlled by \texttt{kappa}. The setups with
-\texttt{kappa = 1.96} and \texttt{kappa = 5.0} obtain very similar
-results.
-
-For EI, the parameter \texttt{xi} controls exploration. The results with
-\texttt{xi = 0.1} and \texttt{xi = 0.01} are also close.
-
-This indicates that the exact value of the exploration parameter has a
-smaller influence on the final result than the choice of surrogate model.
-
-These initial points provide the first observations used to build the
-surrogate model before the guided search starts. The results suggest that
-five initial points provide a good balance between collecting initial
-information and leaving enough evaluations for the guided part of the
-search.
-
-\paragraph{Practical recommendation.}
-
-Based on these results, the following configuration is selected as the
-default Bayesian Optimization setup:
-
-\begin{minted}[
-    fontsize=\small,
-    frame=lines,
-    breaklines=true
-]{yaml}
-bayesian_config:
-  objective_metric: "SCORE"
-  objective: "maximize"
-  n_initial_points: 5
-  acquisition_func: "LCB"
-  base_estimator: "GP"
-  kappa: 1.96
-\end{minted}
-
-This setup gives the highest mean best SCORE in the comparison. It
-therefore provides a simple default for a user who wants to apply
-Bayesian Optimization to IO500 without having to compare many different
-settings.
-
-Overall, the results show that the surrogate model has the strongest
-visible influence on performance. Gaussian Process performs best, while
-the difference between LCB and EI is much smaller. The recommended
-configuration is therefore a Gaussian Process with LCB,
-\texttt{kappa = 1.96}, and five initial points.
+% ---------------------------------------------------------------------------
+% Removed from this subsection when it was restructured (ranking + top four,
+% then budget). Kept for reference only; not shown in the PDF.
+% ---------------------------------------------------------------------------
+% \add{The sensitivity analysis confirms this: with EI and
+% \texttt{xi}~=~0.01, the Gaussian Process reaches 14.84 at 20 evaluations and
+% 14.96 at 40, against at most 14.28 and 14.52 for the two tree-based
+% models.}
+%
+% The acquisition function also affects the results, but the difference
+% between the best acquisition functions is smaller.
+%
+% LCB gives the two highest scores. However, EI is very close. For example,
+% the best LCB setup reaches 14.854, while the best EI setup reaches
+% 14.803.
+%
+% This shows that both LCB and EI work well when combined with a Gaussian
+% Process. PI also gives good results, but it remains slightly below the best LCB and
+% EI setups. \add{The best acquisition function also depends on the surrogate
+% model. With a Random Forest, the sensitivity analysis gives the opposite
+% order: PI performs best and LCB worst, at both 20 and 40 evaluations.}
+%
+% The results therefore suggest that choosing the surrogate model is more
+% important than choosing between LCB and EI.
+%
+%
+%
+% The exploration parameter controls the balance between testing regions
+% that already look promising and exploring less-known parts of the
+% parameter space.
+%
+% For LCB, this behaviour is controlled by \texttt{kappa}. The setups with \texttt{kappa = 1.96} and \texttt{kappa = 5.0} obtain very
+% similar results \add{on average over all budgets. Their order, however,
+% depends on the budget: \texttt{kappa}~=~1.96 is ahead with 10 and 15
+% evaluations, \texttt{kappa}~=~5.0 with 20 and 30 and from 60 evaluations
+% onwards, and the two are within 0.03 at 40. From 60 evaluations, both
+% stabilise between 15.1 and 15.2, that is 99\% of the optimum. This is
+% consistent with the role of \texttt{kappa}: more exploration at the
+% beginning of the search costs evaluations when the budget is small, but pays
+% off when more evaluations are available}.
+%
+% For EI, the parameter \texttt{xi} controls exploration. The results with \texttt{xi = 0.1} and \texttt{xi = 0.01} are also close.
+% \add{The sensitivity analysis around the Random Forest setup shows the same
+% weak effect of \texttt{xi}, below 0.1, but a clearer effect of
+% \texttt{kappa}: with LCB, \texttt{kappa}~=~0.5 performs best, with 14.58 at
+% 20 evaluations against 14.15 and 14.06 for 1.96 and 5.0.}
+%
+% This indicates that the exact value of the exploration parameter has a
+% smaller influence on the final result than the choice of surrogate model.
+%
+% \add{The number of initial points was varied only around the Random Forest
+% setup with EI. Fewer initial points performed better: with three initial
+% points, the search reaches 14.60 at 20 evaluations and 14.73 at 40, against
+% 14.22 and 14.52 with five, and 14.15 and 14.44 with ten.} These initial
+% points provide the first observations used to build the surrogate model
+% before the guided search starts. \replace{The results suggest that five initial points provide a good balance
+% between collecting initial information and leaving enough evaluations for
+% the guided part of the search.}{Each initial point is an evaluation that the
+% surrogate model does not guide, so with a small budget it pays to start the
+% guided search early.}
+%
+%
+%
+% Based on these results, the following configuration is selected as the
+% default Bayesian Optimization setup:
+%
+% \begin{minted}[
+%     fontsize=\small,
+%     frame=lines,
+%     breaklines=true
+% ]{yaml}
+% bayesian_config:
+%   objective_metric: "SCORE"
+%   objective: "maximize"
+%   n_initial_points: 5
+%   acquisition_func: "LCB"
+%   base_estimator: "GP"
+%   kappa: 1.96
+% \end{minted}
+%
+% This setup gives the highest mean best SCORE in the comparison. \add{Its
+% advantage over the same setup with \texttt{kappa}~=~5.0 is, however, within
+% the noise, and \texttt{kappa}~=~5.0 is the better choice when more than 40
+% evaluations are available. The number of initial points is kept at five, as
+% in all setups of the main grid; the sensitivity analysis suggests that three
+% could perform slightly better, but this was only measured with a Random
+% Forest.} It
+% therefore provides a simple default for a user who wants to apply
+% Bayesian Optimization to IO500 without having to compare many different
+% settings.
+%
+% Overall, the results show that the surrogate model has the strongest
+% visible influence on performance. Gaussian Process performs best, while
+% the difference between LCB and EI is much smaller. The recommended
+% configuration is therefore a Gaussian Process with LCB,
+% \texttt{kappa = 1.96}, and five initial points.
+% ---------------------------------------------------------------------------
 
 \subsection{Why random search is not enough}
+\label{sec:random-not-enough}
 
 % \begin{itemize}
 %     \item Analytic argument from the measured score distribution: reaching
@@ -289,22 +464,49 @@ P = 1 - (1-p)^n.
 
 This probability can be used to estimate how many random evaluations are
 needed to reach a target SCORE with a given confidence.
+\add{Figure~\ref{fig:random-probability} shows this probability for five SCORE
+thresholds, as a function of the number of random evaluations.}
+
+\note{Figure added. It replaces the probability curves previously shown next
+to the SCORE distribution, and uses the full dataset.}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/fig_random_probability.png}
+    \caption{Probability that Random Search finds at least one configuration
+    reaching each SCORE threshold, as a function of the number of random
+    evaluations (logarithmic scale). The probability is computed from the
+    fraction $p$ of the 5\,168 measured configurations that reach the
+    threshold. The dotted line marks a probability of 90\%.}
+    \label{fig:random-probability}
+\end{figure}
 
 For moderate SCORE values, Random Search needs only a small number of
-evaluations. However, the required number increases quickly when the
-target approaches the optimum. In particular, reaching a SCORE of at
-least 15 with a probability of 90\% requires approximately 1,081 random
-evaluations.
+evaluations\add{: four random evaluations are enough to reach a SCORE of 11
+with a probability of 90\%, and 14 evaluations to reach 13}. However, the required number increases quickly when the
+target approaches the optimum. In particular, reaching a SCORE of at least 15 with a probability of 90\% requires
+approximately 1,081 random evaluations. \add{A SCORE of 14 already requires
+68 evaluations. With 40 random evaluations, the probability of reaching 13
+is 99.9\%, but it drops to 74\% for 14 and to 8\% for 15. These probabilities
+agree with the measured Random Search runs of Figure~\ref{fig:top2-budget}:
+with 120 evaluations, Random Search reaches a mean best SCORE of 14.66,
+above 14 but still far from 15.}
 
 This large number comes from the fact that very few configurations in the
 reference dataset reach this level. Therefore, randomly selecting one of
 these near-optimal configurations is unlikely when the evaluation budget
 is small.
 
-This does not mean that Random Search always performs poorly. With very
+This does not mean that Random Search always performs poorly. \replace{With very
 small budgets, it can be competitive with some Bayesian Optimization
 configurations and can sometimes perform better than methods based on
-tree surrogate models. Random Search is therefore a useful baseline and
+tree surrogate models.}{With small
+budgets, it is competitive with Bayesian Optimization based on tree
+surrogate models: with 15 evaluations, seven of the fifteen setups of the
+main grid, all based on Random Forest or Extra Trees, obtain a lower mean
+best SCORE than Random Search. With 10 evaluations, however, every setup is
+above Random Search, and with 20 evaluations only two of the nineteen
+setups remain below it.} Random Search is therefore a useful baseline and
 can find configurations with reasonable performance quickly.
 
 Its main limitation appears when the objective is to find a configuration
@@ -337,12 +539,10 @@ of the parameter space.
 To complement the comparison between search algorithms, the automated
 methods were also compared with a configuration proposed by a human
 specialist.
-
 The specialist submitted three configurations based on experience and
 knowledge of IO500 and HPC storage systems. No exhaustive information
 about the response surface was available when these configurations were
 chosen.
-
 Figure~\ref{fig:specialist-vs-bo} compares the best specialist
 configuration with Random Search and Bayesian Optimization.
 
@@ -361,7 +561,6 @@ The best configuration proposed by the specialist obtained a SCORE of
 14.48, which corresponds to approximately 95\% of the optimum SCORE of
 15.28. This shows that expert knowledge can identify a very good
 configuration without exploring a large part of the parameter space.
-
 Random Search with 40 evaluations reached a SCORE of 14.28, or about
 93\% of the optimum. Bayesian Optimization with the same budget of 40
 evaluations reached a SCORE of 15.00, corresponding to approximately
@@ -372,14 +571,14 @@ specialist. The specialist selected the configurations in a short amount
 of time and without access to the complete measured response surface. In
 contrast, Bayesian Optimization uses several evaluations and learns from
 the results obtained during the search.
-
 The comparison instead shows that, with a relatively small evaluation
 budget, Bayesian Optimization can reach or exceed the quality of an
 expert-informed configuration in a systematic and reproducible way.
-
-This result should nevertheless be interpreted with care. Only one
-specialist participated in this experiment and only three configurations
-were submitted. The comparison is therefore an illustration rather than
+This result should nevertheless be interpreted with care. Only one specialist participated in this experiment and only three
+configurations were submitted. \add{Moreover, this specialist knew the
+platform particularly well, having already conducted a series of IOR
+experiments on it. A specialist tuning a less familiar system would not
+necessarily reach the same level.} The comparison is therefore an illustration rather than
 a statistically meaningful evaluation of human expertise.
 
 \subsection{Valid versus reduced-cost executions}
@@ -391,12 +590,9 @@ a statistically meaningful evaluation of human expertise.
 are marked as \texttt{INVALID} (Section~\ref{sec:exhaustive-search}). This
 raises the question of whether these short executions still give useful
 information about the quality of a configuration.}
-
 To study this question, several configurations were executed using both
 the reduced and the valid IO500 settings. Their scores and bandwidth
-results were then compared.
-
-Figure~\ref{fig:valid-invalid-comparison} shows this comparison.
+results were then compared. Figure~\ref{fig:valid-invalid-comparison} shows this comparison.
 
 \begin{figure}[H]
     \centering
@@ -411,28 +607,20 @@ The comparison shows that the scores obtained with short executions are
 different from the valid IO500 scores. The difference is also not the
 same for every configuration. Therefore, a simple correction value
 cannot be used to convert an invalid score into a valid score.
-
 However, reproducing the exact valid score is not the objective of the
 reduced-cost tests. What matters for this study is whether they provide
 enough information to distinguish good configurations from poor ones.
 If a good configuration can still be identified with a short execution,
 the complete parameter space can be explored at a much lower cost.
 
-\subsection{Example of a proposed comparison between valid and invalid IO500
-scores}
-\label{sec:proposed-validation}
-
 The reduced-cost IO500 executions were introduced as a possible way to
 explore the parameter space faster. However, this approach was not fully
 validated during the internship.
-
 A possible validation experiment would be to compare valid and invalid
-IO500 executions using the same parameter values. 
-
+IO500 executions using the same parameter values.
 The number of storage targets could then be varied from 1 to 8. Several
 repetitions could be performed for each value using both valid and
 reduced-cost IO500 settings.
-
 Figure~\ref{fig:valid-invalid-ost} illustrates the type of comparison that
 could be used for this validation.
 
@@ -448,12 +636,10 @@ could be used for this validation.
 The goal of such an experiment would not be to convert an invalid SCORE
 into a valid SCORE. Instead, it would be to study whether the relative
 behaviour of the configurations is similar in both cases.
-
 If similar trends are observed, reduced-cost executions could be useful
 for guiding the search before validating the final configurations with
 official IO500 runs. If the trends are very different, the reduced-cost
 approach would not be reliable enough for this purpose.
-
 This validation was not completed during the internship and is therefore
 left as future work.
 
@@ -465,12 +651,10 @@ As the internship progressed, the work was extended to the development of
 IOPS. In addition to using IOPS to run the experiments, new features were
 added to make IO500 easier to configure and to extend the available
 optimization methods.
-
 The first contribution was the addition of IO500 support in IOPS. The
 second contribution was the implementation of the Tree-structured Parzen
 Estimator (TPE) as a new search method. The IOPS documentation was also
 updated to describe these new features and explain how they can be used.
-
 
 \subsubsection{IO500 plugin in IOPS}
 \label{sec:iops-io500-plugin}
@@ -478,10 +662,8 @@ updated to describe these new features and explain how they can be used.
 Before this work, an IO500 experiment had to be configured manually in
 IOPS. During the internship, an IO500 plugin was added to simplify this
 process.
-
 The plugin allows the user to generate an IO500 configuration template
 with a simple command:
-
 
 \begin{minted}[
     fontsize=\small,
@@ -496,7 +678,6 @@ When this command is executed, IOPS generates a YAML configuration file
 that contains the main elements needed to run an IO500 experiment. The
 generated file can then be modified according to the target machine,
 storage system, and experiment.
-
 Figure~\ref{fig:iops-generate-io500} shows an example of the command used
 to generate the configuration.
 
@@ -513,12 +694,10 @@ by the user. These include the number of compute nodes, the number of MPI
 processes per node, the total number of MPI tasks, the dataset size, the
 transfer size, the block size, the segment count, the number of storage
 targets, and the file organization parameters.
-
 Some parameters are selected directly by the user, while others can be
 computed automatically. For example, the total number of MPI tasks can
 be calculated from the number of nodes and the number of processes per
 node.
-
 The generated configuration is intended to be a starting point rather
 than a fixed configuration. The user should adapt it to the HPC platform
 and storage system before running the benchmark.
@@ -526,7 +705,6 @@ and storage system before running the benchmark.
 The documentation of IOPS was also updated to explain how to use this new
 functionality. It describes the command used to generate the template and
 the main parameters that should be adapted.
-
 Figure~\ref{fig:iops-io500-documentation} shows part of the documentation
 added for the IO500 plugin.
 
@@ -542,20 +720,17 @@ This contribution provides a simpler and more reproducible way to prepare
 IO500 experiments. A user can generate a template, modify the required
 parameters, and use the resulting YAML file directly with IOPS.
 
-
 \subsubsection{Tree-structured Parzen Estimator}
 \label{sec:iops-tpe}
 
 The search component of IOPS was also extended during the internship.
 The Tree-structured Parzen Estimator (TPE) was implemented as an
 additional optimization method.
-
 TPE is a guided optimization method that uses the results of previous
 evaluations to choose new configurations. In this sense, its objective is
 similar to Bayesian Optimization: both methods try to avoid testing the
 complete parameter space and use previous observations to guide the
 search.
-
 However, the two approaches build their models differently.
 
 Bayesian Optimization builds a surrogate model that estimates the
@@ -563,13 +738,11 @@ objective function. In this study, the objective function represents the
 relation between a configuration and its IO500 SCORE. Based on this
 model, an acquisition function is used to select the next configuration
 to evaluate.
-
 TPE uses another approach. Instead of directly predicting the SCORE, it
 uses the previous observations to separate configurations according to
 their performance. It models the distribution of parameter values for
 good configurations and compares it with the distribution of
 lower-performing configurations.
-
 The general idea can be represented as:
 
 \[
@@ -581,7 +754,6 @@ The general idea can be represented as:
 \rightarrow
 \text{select a promising configuration}.
 \]
-
 Figure~\ref{fig:bo-vs-tpe} illustrates the main difference between
 Bayesian Optimization and TPE.
 
@@ -606,13 +778,11 @@ The TPE method was implemented in IOPS during the internship. However, it
 was not evaluated on the IO500 experiments. It is therefore presented as
 a software contribution rather than as one of the methods included in the
 experimental comparison of this report.
-
 Other optimization methods were also considered as possible future
 extensions. These include Iterated Racing (irace) and the Covariance
 Matrix Adaptation Evolution Strategy (CMA-ES). These methods were
 considered during the internship but were not included in the experimental
 evaluation.
-
 These developments extended the initial scope of the internship and
 contributed to making IOPS easier to use for IO500 experiments and easier
 to extend with new search methods.
